@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import OnBoardLayout from "../UI/common/OnBoardLayout";
 import { cn } from "@/util/util";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -9,11 +9,16 @@ import { db, storage } from "@/libs/firebase";
 import { useUserStore } from "@/store/user.store";
 import { v4 as uuid } from "uuid";
 import toast from "react-hot-toast";
-import { deployContract } from "wagmi/actions";
+import { deployContract, waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { merlinTestnet, wagmiConfig } from "@/libs/wagmiConfig";
-import { EXPONENTIAL_BONDING_CURVE_ABI, EXPONENTIAL_BONDING_CURVE_BYTECODE } from "@/util/constants";
+import { EXPONENTIAL_TOKEN_ABI, EXPONENTIAL_TOKEN_BYTECODE, MAX_GAS_FOR_EXPONENTIAL_TOKEN } from "@/util/constants";
+import { useAccount } from "wagmi";
+import { useEstimatedGasFee } from "@/hooks/useEstimatedGasFee";
+import { ethers, parseEther } from "ethers";
+import { ContractFactory } from "ethers";
 
 const HostCreateGroup = ({ onBack, onComplete }: { onBack: () => void, onComplete: () => void; }) => {
+    const { address: userWalletAddress } = useAccount();
     const [group_photo, setGroupPhoto] = useState<File | null>(null);
     const [group_name, setGroupName] = useState('');
     const [group_ticker, setGroupTicker] = useState('');
@@ -23,6 +28,24 @@ const HostCreateGroup = ({ onBack, onComplete }: { onBack: () => void, onComplet
 
     const user = useUserStore(state => state.user);
 
+    // const signer = useRef<ethers.JsonRpcSigner>(null);
+    // const provider = useRef<any>();
+
+    // useEffect(() => {
+    //     const initEther = async () => {
+    //         if (window.ethereum == null) {
+    //             console.log("MetaMask not installed; using read-only defaults");
+    //             provider.current = ethers.getDefaultProvider();
+
+    //         } else {
+    //             provider.current = new ethers.BrowserProvider(window.ethereum);
+    //             signer.current = await provider.current.getSigner();
+    //         }
+    //     };
+
+    //     initEther();
+    // }, []);
+
     const handleSumbit = async () => {
         const storageRef = ref(storage, `group_pfp/${group_photo?.name}`);
         const metadata = {
@@ -30,43 +53,73 @@ const HostCreateGroup = ({ onBack, onComplete }: { onBack: () => void, onComplet
         };
 
         try {
-            // const deployedContractTxHash = await deployContract(wagmiConfig, {
-            //     abi: EXPONENTIAL_BONDING_CURVE_ABI,
-            //     args: ['0x3D81177238C69E104472B0D3781631c771E8c88a'],
-            //     bytecode: EXPONENTIAL_BONDING_CURVE_BYTECODE
+            // console.log({ signer });
+
+            // const cf = new ContractFactory(EXPONENTIAL_TOKEN_ABI, EXPONENTIAL_TOKEN_BYTECODE, signer.current);
+            // const contractERC20 = await cf.deploy(group_name, group_ticker, '0x3D81177238C69E104472B0D3781631c771E8c88a', userWalletAddress, { value: BigInt(1000000), gasLimit: BigInt(2041304), chainId: merlinTestnet.id, });
+
+            // console.log(`Contract Address: ${contractERC20.target}`);
+            // console.log("Deployment transaction details");
+            // console.log(contractERC20.deploymentTransaction());
+            // console.log("\nWait for contract deployment on the blockchain");
+            // await contractERC20.waitForDeployment();
+
+            const deployedContractTxHash = await deployContract(wagmiConfig, {
+                abi: EXPONENTIAL_TOKEN_ABI,
+                args: [group_name, group_ticker, '0x3D81177238C69E104472B0D3781631c771E8c88a', userWalletAddress],
+                bytecode: EXPONENTIAL_TOKEN_BYTECODE,
+                value: BigInt(100000000000000),
+                gas: BigInt(2041304),
+                chainId: merlinTestnet.id
+            });
+
+            console.log({ deployedContractTxHash });
+
+            const txRes = await waitForTransactionReceipt(wagmiConfig, {
+                hash: deployedContractTxHash,
+            });
+
+            console.log("txRes = ", JSON.stringify(txRes, null, 2));
+
+            // const mintTxnHash = await writeContract(wagmiConfig, {
+            //     abi: EXPONENTIAL_TOKEN_ABI,
+            //     functionName: 'mintTokens',
+            //     address: '0x1327796469Cc04a6D3bD92Be95da437C4EF76927',
+            //     value: BigInt(100000000000000)
             // });
 
-            // console.log({ deployedContractTxHash });
+            // await waitForTransactionReceipt(wagmiConfig, {
+            //     hash: mintTxnHash
+            // });
 
+            // const uploadTask = await uploadBytes(storageRef, group_photo!, metadata);
+            // const pfp_url = await getDownloadURL(storageRef);
 
-            const uploadTask = await uploadBytes(storageRef, group_photo!, metadata);
-            const pfp_url = await getDownloadURL(storageRef);
+            // const groupId = uuid();
 
-            const groupId = uuid();
+            // await setDoc(doc(db, "users", user?.id as string, "groups", groupId), {
+            //     id: groupId,
+            //     pfp_url: pfp_url,
+            //     name: group_name,
+            //     ticker: group_ticker,
+            //     description: group_description
+            // }, {
+            //     merge: true
+            // });
 
-            await setDoc(doc(db, "users", user?.id as string, "groups", groupId), {
-                id: groupId,
-                pfp_url: pfp_url,
-                name: group_name,
-                ticker: group_ticker,
-                description: group_description
-            }, {
-                merge: true
-            });
+            // useUserStore.setState({
+            //     user: {
+            //         ...user, groups: [{
+            //             id: groupId,
+            //             pfp_url: pfp_url,
+            //             name: group_name,
+            //             ticker: group_ticker,
+            //             description: group_description
+            //         }]
+            //     } as any
+            // });
 
-            useUserStore.setState({
-                user: {
-                    ...user, groups: [{
-                        id: groupId,
-                        pfp_url: pfp_url,
-                        name: group_name,
-                        ticker: group_ticker,
-                        description: group_description
-                    }]
-                } as any
-            });
-
-            onComplete();
+            // onComplete();
         } catch (err) {
             toast.error("Something went wrong");
             console.log("[HostCreateGroup/handleSubmit]", err);

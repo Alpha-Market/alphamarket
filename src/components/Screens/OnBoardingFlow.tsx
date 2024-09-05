@@ -24,7 +24,7 @@ enum FLOW_STAGE {
 
 const OnBoardingFlow = () => {
     const user = useUserStore(state => state.user);
-    const [stage, setStage] = useState<FLOW_STAGE>(FLOW_STAGE.ROLE_SELECTION);
+    const [stage, setStage] = useState<FLOW_STAGE>(FLOW_STAGE.HOST_GROUP_CREATION);
 
     return (
         <>
@@ -73,7 +73,9 @@ const OnBoardingFlow = () => {
 
             {
                 stage === FLOW_STAGE.HOST_FIRST_MESSAGE &&
-                <HostFirstMessage />
+                <HostFirstMessage onBack={() => {
+                    setStage(FLOW_STAGE.HOST_PROFILE);
+                }} />
             }
 
             {

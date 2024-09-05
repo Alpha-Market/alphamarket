@@ -1,6 +1,7 @@
 import { useUserStore } from "@/store/user.store";
 import Header from "../UI/common/Header";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import ExpandableVerticalScrollViewCustom from "../UI/common/ExpandableVerticalScrollView";
 
 type Message = {
     value: string,
@@ -8,10 +9,12 @@ type Message = {
     author: string;
 };
 
-const HostFirstMessage = () => {
+const HostFirstMessage = ({ onBack }: { onBack: () => void; }) => {
     const user = useUserStore(state => state.user);
     const [messages, setMessages] = useState<Message[]>([]);
     const [msg, setMsg] = useState('');
+
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
     return (
         <div className="flex flex-col bg-black w-full h-full">
@@ -19,7 +22,7 @@ const HostFirstMessage = () => {
 
             <div className="flex-1 mx-auto flex flex-col w-full max-w-[732px]">
                 <div className="flex items-center gap-3 p-3 border-b border-b-stroke-1">
-                    <div className="cursor-pointer">
+                    <div className="cursor-pointer" onClick={onBack}>
                         <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 16 16" fill="none">
                             <path d="M7.21871 7.99999L10.5187 11.3L9.57604 12.2427L5.33337 7.99999L9.57604 3.75732L10.5187 4.69999L7.21871 7.99999Z" fill="white" fillOpacity="0.6" />
                         </svg>
@@ -37,7 +40,7 @@ const HostFirstMessage = () => {
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col m-3">
+                <div className="flex-1 relative px-3 pt-3">
                     <div className="bg-card-2 rounded-md p-3 flex items-center gap-4">
                         <p className="flex-[1] text-white sm:text-xs text-base font-medium">
                             Make your first post and earn points
@@ -49,41 +52,46 @@ const HostFirstMessage = () => {
                     </div>
 
                     {/* Chat Area */}
-                    <div className="flex-1 relative flex flex-col">
-                        <div className="flex-1 py-4 flex flex-col justify-end bg-transparent overflow-y-auto max-h-[80%] bg-green-300">
+                    {/* py-4 flex flex-col justify-end overflow-y-scroll bg-pink-500 */}
+
+                    <ExpandableVerticalScrollViewCustom expand={false} rootCls="flex-1 max-h-[466px] py-4" type="hover">
+                        <div className="flex flex-col w-full">
                             {messages.map(m => (
                                 <MessageChip m={m} />
                             ))}
                         </div>
-
-                        <div className="flex items-center gap-3 bg-card-1 p-3 rounded-lg">
-                            <input
-                                type="text"
-                                className="bg-transparent flex-1 text-tertiary text-base font-normal"
-                                placeholder="Write something"
-                                value={msg}
-                                onChange={(e) => {
-                                    setMsg(e.target.value);
-                                }}
-                            />
-
-                            <button onClick={() => {
-                                const t: Message = {
-                                    author: 'Alex Block',
-                                    timestamp: (new Date()).toLocaleDateString(),
-                                    value: msg
-                                };
-
-                                setMessages([...messages, t]);
-                                setMsg('');
-                            }}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 16 16" fill="none">
-                                    <path d="M1.28201 6.24686C0.942012 6.11019 0.946012 5.90686 1.30468 5.78752L14.0287 1.54619C14.3813 1.42886 14.5833 1.62619 14.4847 1.97152L10.8487 14.6955C10.7487 15.0482 10.532 15.0642 10.3707 14.7422L7.33335 8.66686L1.28201 6.24686ZM4.54201 6.11352L8.29935 7.61686L10.326 11.6715L12.69 3.39819L4.54135 6.11352H4.54201Z" fill="white" fillOpacity="0.6" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                    </ExpandableVerticalScrollViewCustom>
                 </div>
+
+                <form className="flex items-center gap-3 bg-card-1 p-3 rounded-lg mb-3"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        const t: Message = {
+                            author: 'Alex Block',
+                            timestamp: (new Date()).toLocaleDateString(),
+                            value: msg
+                        };
+
+                        setMessages([...messages, t]);
+                        setMsg('');
+                    }}
+                >
+                    <input
+                        type="text"
+                        className="bg-transparent flex-1 text-tertiary text-base font-normal"
+                        placeholder="Write something"
+                        value={msg}
+                        onChange={(e) => {
+                            setMsg(e.target.value);
+                        }}
+                    />
+
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 16 16" fill="none">
+                            <path d="M1.28201 6.24686C0.942012 6.11019 0.946012 5.90686 1.30468 5.78752L14.0287 1.54619C14.3813 1.42886 14.5833 1.62619 14.4847 1.97152L10.8487 14.6955C10.7487 15.0482 10.532 15.0642 10.3707 14.7422L7.33335 8.66686L1.28201 6.24686ZM4.54201 6.11352L8.29935 7.61686L10.326 11.6715L12.69 3.39819L4.54135 6.11352H4.54201Z" fill="white" fillOpacity="0.6" />
+                        </svg>
+                    </button>
+                </form>
             </div>
         </div>
     );
