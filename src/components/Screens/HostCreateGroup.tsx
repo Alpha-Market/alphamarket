@@ -11,11 +11,11 @@ import { v4 as uuid } from "uuid";
 import toast from "react-hot-toast";
 import { deployContract, waitForTransactionReceipt, writeContract } from "wagmi/actions";
 import { merlinTestnet, wagmiConfig } from "@/libs/wagmiConfig";
-import { EXPONENTIAL_TOKEN_ABI, EXPONENTIAL_TOKEN_BYTECODE, MAX_GAS_FOR_EXPONENTIAL_TOKEN } from "@/util/constants";
+import { EXPONENTIAL_TOKEN_ABI, EXPONENTIAL_TOKEN_BYTECODE, MAX_GAS_FOR_EXPONENTIAL_TOKEN, SEPOLIA_EXPONENTIAL_TOKEN_ABI, SEPOLIA_EXPONENTIAL_TOKEN_BYTECODE } from "@/util/constants";
 import { useAccount } from "wagmi";
 import { useEstimatedGasFee } from "@/hooks/useEstimatedGasFee";
-import { ethers, parseEther } from "ethers";
-import { ContractFactory } from "ethers";
+import { sepolia } from "viem/chains";
+import { parseEther } from "viem";
 
 const HostCreateGroup = ({ onBack, onComplete }: { onBack: () => void, onComplete: () => void; }) => {
     const { address: userWalletAddress } = useAccount();
@@ -65,12 +65,12 @@ const HostCreateGroup = ({ onBack, onComplete }: { onBack: () => void, onComplet
             // await contractERC20.waitForDeployment();
 
             const deployedContractTxHash = await deployContract(wagmiConfig, {
-                abi: EXPONENTIAL_TOKEN_ABI,
-                args: [group_name, group_ticker, '0x3D81177238C69E104472B0D3781631c771E8c88a', userWalletAddress],
-                bytecode: EXPONENTIAL_TOKEN_BYTECODE,
-                value: BigInt(100000000000000),
+                abi: SEPOLIA_EXPONENTIAL_TOKEN_ABI,
+                args: [group_name, group_ticker, '0x3FE1EeFD8FcA939dD0670564700A2703BBfAFe96', userWalletAddress],
+                bytecode: SEPOLIA_EXPONENTIAL_TOKEN_BYTECODE,
+                value: BigInt('100000000000000'),
                 gas: BigInt(2041304),
-                chainId: merlinTestnet.id
+                chainId: sepolia.id
             });
 
             console.log({ deployedContractTxHash });

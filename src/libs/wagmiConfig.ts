@@ -1,5 +1,5 @@
 import { http, createConfig } from 'wagmi';
-import { merlin } from 'wagmi/chains';
+import { merlin, sepolia } from 'wagmi/chains';
 import { metaMask } from 'wagmi/connectors';
 import { type Chain } from 'viem';
 
@@ -23,12 +23,13 @@ export const merlinTestnet = {
 } as const satisfies Chain;
 
 export const wagmiConfig = createConfig({
-    chains: [merlin, merlinTestnet],
+    chains: [merlin, merlinTestnet, sepolia],
     connectors: [
         metaMask()
     ],
     transports: {
         [merlin.id]: http(),
         [merlinTestnet.id]: http(),
+        [sepolia.id]: http()
     },
 });
