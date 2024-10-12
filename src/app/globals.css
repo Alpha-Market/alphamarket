@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+textarea,
+input {
+    outline: none;
+}
+
+body{
+    overflow-y: auto;
+    overscroll-behavior: none;
+}
