@@ -1,35 +1,36 @@
-import { db } from "@/libs/firebase";
-import { useUserStore } from "@/store/user.store";
+"use server";
+
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import admin from "@/lib/firebaseAdmin";
 import { User } from "@/types";
-import { User as FirebaseAuthUser } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 
-export const hydrateNewUser = async (authUser: FirebaseAuthUser) => {
-    const newUser: User = {
-        id: authUser.uid,
-        email: authUser.email || '',
-        isNewUser: true,
-        role: ""
-    };
+export const getUserInfo = async () => {
+    const token = cookies().get("access_token");
 
-    await setDoc(doc(db, "users", authUser.uid), newUser);
-    useUserStore.setState({ user: newUser });
-};
+    if (token) {
+        try {
+            const decodedToken = jwt.decode(token.value) as {
+                uid: string;
+                email: string;
+            };
+            
+            const userInfo = await admin
+                .firestore()
+                .collection("users")
+                .doc(decodedToken.uid)
+                .get();
 
-export const hydrateOldUser = async (authUser: FirebaseAuthUser) => {
-    const docSnap = await getDoc(doc(db, "users", authUser.uid));
-
-    if (docSnap.exists()) {
-        const _u = docSnap.data();
-        useUserStore.setState({ user: _u as User });
-    } else {
-        useUserStore.setState({
-            user: {
-                id: authUser.uid,
-                email: authUser.email as string,
-                isNewUser: true,
-                role: ""
+            if (userInfo.exists) {
+                return userInfo.data() as User;
             }
-        });
+
+            return null;
+        } catch (err) {
+            console.log("err in Rootlayout.tsx -> ", err);
+            return null;
+        }
+    } else {
+        return null;
     }
 };

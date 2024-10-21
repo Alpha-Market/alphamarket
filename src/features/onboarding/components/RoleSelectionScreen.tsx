@@ -1,12 +1,12 @@
 "use client";
 
-import { db } from "@/libs/firebase";
+import { db } from "@/lib/firebase";
 import { useUserStore } from "@/store/user.store";
 import { User, UserRole } from "@/types";
-import { cn } from "@/util/util";
+import { cn } from "@/lib/utils";
 import { doc, setDoc } from "firebase/firestore";
 import { FC, useState } from "react";
-import OnBoardLayout from "../UI/common/OnBoardLayout";
+import OnBoardLayout from "@/components/Layout/OnBoardLayout";
 
 const RoleSelectionScreen = ({ onComplete }: { onComplete: () => void; }) => {
     const [role, setRole] = useState<UserRole | ''>('');

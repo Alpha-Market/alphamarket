@@ -1,5 +1,5 @@
 import { poppinFont } from "@/util/fonts";
-import { cn } from "@/util/util";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 const LandingPage = () => {

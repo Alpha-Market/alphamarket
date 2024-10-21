@@ -1,15 +1,15 @@
-import { merlinTestnet } from "@/libs/wagmiConfig";
+'use client';
+
 import { useAccount, useBalance } from "wagmi";
 
 const Header = () => {
-    const { address: userWalletAddress } = useAccount();
-    const { data: useWalletbalance } = useBalance({
-        chainId: merlinTestnet.id,
-        address: userWalletAddress
+    const { address: walletAddress } = useAccount();
+    const { data: walletBalance } = useBalance({
+        address: walletAddress
     });
 
     return (
-        <div className="flex items-center justify-between py-4 px-3">
+        <div className="flex items-center justify-between py-4 px-10 bg-black">
             <div className="cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width={33} height={35} viewBox="0 0 33 35" fill="none">
                     <path d="M11.2484 15.7095L10.1039 26.7702C10.0754 27.0441 9.94608 27.2977 9.74103 27.4815C9.53598 27.6654 9.26988 27.7664 8.99448 27.7649H5.28726C5.13158 27.7657 4.97747 27.7338 4.83496 27.6711C4.69244 27.6084 4.56471 27.5165 4.46007 27.4012C4.35543 27.2859 4.27622 27.1499 4.2276 27.002C4.17898 26.8541 4.16204 26.6976 4.17787 26.5427L5.32978 15.4914C5.35824 15.2174 5.48757 14.9639 5.69262 14.78C5.89767 14.5961 6.16377 14.4951 6.43918 14.4966H10.1519C10.3057 14.4977 10.4575 14.5308 10.5978 14.5937C10.7381 14.6566 10.8637 14.748 10.9668 14.862C11.0699 14.9761 11.1482 15.1103 11.1967 15.2562C11.2451 15.4021 11.2627 15.5565 11.2484 15.7095Z" fill="white" fillOpacity="0.1" />
@@ -23,7 +23,7 @@ const Header = () => {
 
             <div className="rounded-lg bg-card-1 p-2 flex items-center gap-[6px]">
                 <span className="text-secondary text-xs font-normal uppercase">Balance</span>
-                <span className="text-white text-base font-normal">{useWalletbalance?.formatted} BTC</span>
+                <span className="text-white text-base font-normal">{parseFloat(walletBalance?.formatted as string).toFixed(4)} BTC</span>
             </div>
         </div>
     );

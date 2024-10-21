@@ -10,10 +10,10 @@ export type User = {
     isNewUser: boolean;
     role: UserRole | "";
     pfp_url: string;
-    categories: string,
-    network: string,
+    categories: Catergories[],
+    network: Networks,
     bio: string;
-    groups?: Array<Group>;
+    group: Group;
 };
 
 export type Group = {
@@ -23,3 +23,14 @@ export type Group = {
     ticker: string,
     description: string;
 };
+
+export enum Catergories {
+    GAMING = "gaming",
+    DEFI = "defi",
+    SOCIALFI = "socialfi",
+    NFT_PFP = "nft_pfp",
+}
+
+export enum Networks {
+    MERLIN = "merlin",
+}

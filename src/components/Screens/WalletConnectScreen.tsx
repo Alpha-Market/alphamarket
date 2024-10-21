@@ -1,8 +1,6 @@
-import { useAppStore } from "@/store/app.store";
-import { Logo } from "@/util/Icons";
 import toast from "react-hot-toast";
 import { useConnect } from "wagmi";
-import OnBoardLayout from "../UI/common/OnBoardLayout";
+import OnBoardLayout from "../Layout/OnBoardLayout";
 
 const WalletConnectScreen = () => {
     const { connect, connectors } = useConnect();
@@ -16,9 +14,6 @@ const WalletConnectScreen = () => {
                                 connector: connectors[0]
                             },
                             {
-                                onSuccess: (d) => {
-                                    useAppStore.setState({ isWalletConnected: true });
-                                },
                                 onError: (err) => {
                                     console.log(`[WalletConnectScreen/onError] ${err}`);
                                     toast.error(`Error while connecting wallet`);

@@ -1,11 +1,11 @@
-import { useState } from "react";
+'use client';
+
 import RoleSelectionScreen from "./RoleSelectionScreen";
 import HostFanDetailsScreen from "./HostFanDetailsScreen";
-import { useUserStore } from "@/store/user.store";
 import HostCreateGroup from "./HostCreateGroup";
-import HostBuyFirstMembershipKey from "./HostBuyFirstMembershipKey";
-import HostFirstMessage from "./HostFirstMessage";
-import HostProfileScreen from "./HostProfileScreen";
+import HostFirstMessage from "../../../components/Screens/GroupChatScreen";
+import HostProfileScreen from "../../host/components/HostProfileScreen";
+import { useState } from "react";
 
 enum FLOW_STAGE {
     // COMMON
@@ -14,7 +14,6 @@ enum FLOW_STAGE {
 
     // HOST FLOW
     HOST_GROUP_CREATION = "host_group_creation",
-    HOST_BUY_FIRST_KEY = "host_buy_first_key",
     HOST_FIRST_MESSAGE = "host_first_message",
     HOST_PROFILE = "host_profile",
 
@@ -23,7 +22,6 @@ enum FLOW_STAGE {
 }
 
 const OnBoardingFlow = () => {
-    const user = useUserStore(state => state.user);
     const [stage, setStage] = useState<FLOW_STAGE>(FLOW_STAGE.HOST_GROUP_CREATION);
 
     return (
@@ -54,18 +52,6 @@ const OnBoardingFlow = () => {
                         setStage(FLOW_STAGE.HOST_FAN_DETAILS);
                     }}
                     onComplete={() => {
-                        setStage(FLOW_STAGE.HOST_BUY_FIRST_KEY);
-                    }}
-                />
-            }
-
-            {
-                stage === FLOW_STAGE.HOST_BUY_FIRST_KEY &&
-                <HostBuyFirstMembershipKey
-                    onBack={() => {
-                        setStage(FLOW_STAGE.HOST_GROUP_CREATION);
-                    }}
-                    onComplete={() => {
                         setStage(FLOW_STAGE.HOST_FIRST_MESSAGE);
                     }}
                 />
@@ -73,9 +59,7 @@ const OnBoardingFlow = () => {
 
             {
                 stage === FLOW_STAGE.HOST_FIRST_MESSAGE &&
-                <HostFirstMessage onBack={() => {
-                    setStage(FLOW_STAGE.HOST_PROFILE);
-                }} />
+                <HostFirstMessage />
             }
 
             {

@@ -1,6 +1,6 @@
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { FC } from 'react';
-import { cn } from '@/util/util';
+import { cn } from '@/lib/utils';
 
 interface PropsScrollCls {
     children: React.ReactNode;
