@@ -9,10 +9,10 @@ export type User = {
     email: string;
     isNewUser: boolean;
     role: UserRole | "";
-    pfp_url: string;
-    categories: string,
-    network: string,
-    bio: string;
+    pfp_url: string | "";
+    categories: string | "",
+    network: string | "",
+    bio: string | "";
     groups?: Array<Group>;
 };
 

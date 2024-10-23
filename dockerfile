@@ -1,5 +1,5 @@
 
-FROM node:18-alpine AS base
+FROM node:18.18-alpine AS base
 
 RUN apk add --no-cache libc6-compat python3 make g++ 
 
