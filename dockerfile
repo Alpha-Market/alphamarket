@@ -17,8 +17,6 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY .env .env
-
 RUN npm run build
 
 FROM node:18-alpine AS runner
