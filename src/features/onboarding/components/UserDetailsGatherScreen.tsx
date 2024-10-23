@@ -295,14 +295,14 @@ const UserDetailsGatherScreen = ({
                         <button
                             className="flex items-center gap-[10px] border border-white rounded-lg p-3"
                             onClick={() => {
-                                setSelectedNetwork(Networks.MERLIN);
+                                setSelectedNetwork(Networks.SEPOLIA);
                             }}
                         >
                             <span className="text-white font-bold text-base">
-                                Merlin
+                                Sepolia
                             </span>
 
-                            {selectedNetwork === Networks.MERLIN && (
+                            {selectedNetwork === Networks.SEPOLIA && (
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width={16}
@@ -399,7 +399,7 @@ const CatergoryChip: FC<CatergoryChipProps> = ({
                 {text}
             </span>
 
-            {isSelected && (
+            {/* {isSelected && (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width={16}
@@ -412,7 +412,7 @@ const CatergoryChip: FC<CatergoryChipProps> = ({
                         fill="white"
                     />
                 </svg>
-            )}
+            )} */}
         </button>
     );
 };

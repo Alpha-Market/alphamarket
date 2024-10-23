@@ -14,7 +14,7 @@ const LoginFormDialog = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { signUp, signIn } = useAuth();
+    const { signUp, signIn, signInWithTwitter } = useAuth();
 
     const handleLogin = async () => {
         setLoading(true);
@@ -28,14 +28,21 @@ const LoginFormDialog = () => {
                 router.push("/home?tab=home");
             }
         } catch (err) {
-            console.log(err);
+            console.log("[LoginFormDialog/handleLogin]", err);
         }
 
         setLoading(false);
     };
 
+    const handleXLogin = async () => {
+        setLoading(true);
+        await signInWithTwitter();
+        router.push("/onboarding");
+        setLoading(false);
+    };
+
     return (
-        <div className="sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] bg-card-1 w-full sm:max-w-full max-w-[422px] border border-stroke-1 sm:rounded-b-none rounded-xl p-4 flex flex-col gap-4">
+        <div className="dialog-base sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] w-full sm:max-w-full max-w-[422px] sm:rounded-b-none p-4 flex flex-col gap-4">
             {loading && <LoadingOverlay size={50} />}
             <div className="p-3 border border-stroke-1 rounded-lg flex items-center w-max gap-[10px]">
                 <button
@@ -124,7 +131,10 @@ const LoginFormDialog = () => {
                 >
                     {isNewUser ? "Agree & Join" : "Continue"}
                 </button>
-                <button className="w-full p-3 bg-white text-black text-sm uppercase font-semibold -tracking-[.98px] rounded-lg">
+                <button
+                    className="w-full p-3 bg-white text-black text-sm uppercase font-semibold -tracking-[.98px] rounded-lg"
+                    onClick={handleXLogin}
+                >
                     {"Continue with X"}
                 </button>
             </form>

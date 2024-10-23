@@ -49,7 +49,7 @@ export default function HostProfileTabs() {
                         {selectedTab === tab ? (
                             <motion.div
                                 className="absolute -bottom-[1px] inset-x-0 h-[1px] bg-white"
-                                layoutId="underline"
+                                layoutId="hostprofiletabs-underline"
                             />
                         ) : null}
                     </li>

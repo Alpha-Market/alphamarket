@@ -6,9 +6,12 @@ export enum UserRole {
 
 export type User = {
     id: string;
+    displayName?: string;
     email: string;
     isNewUser: boolean;
     role: UserRole | "";
+    photoURL?: string;
+    twitterHandle?: string;
     pfp_url: string;
     categories: Catergories[];
     network: Networks;
@@ -48,4 +51,5 @@ export enum Catergories {
 
 export enum Networks {
     MERLIN = "merlin",
+    SEPOLIA = "sepolia"
 }

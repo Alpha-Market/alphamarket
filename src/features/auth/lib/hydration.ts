@@ -15,7 +15,7 @@ export const hydrateNewUser = async (authUser: FirebaseAuthUser) => {
         network: "" as any,
         pfp_url: "",
         group: null,
-        campaigns: []
+        campaigns: [],
     };
 
     await setDoc(doc(db, "users", authUser.uid), newUser);
@@ -40,8 +40,39 @@ export const hydrateOldUser = async (authUser: FirebaseAuthUser) => {
                 categories: [],
                 network: "" as any,
                 group: null,
-                campaigns: []
+                campaigns: [],
             },
+        });
+    }
+};
+
+export const hydrateTwitterUser = async (authUser: FirebaseAuthUser) => {
+    const docSnap = await getDoc(doc(db, "users", authUser.uid));
+
+    if (docSnap.exists()) {
+        const _u = docSnap.data();
+        useUserStore.setState({ user: _u as User });
+    } else {
+        const newUser: User = {
+            id: authUser.uid,
+            displayName: authUser.displayName as string,
+            twitterHandle: (authUser as any)?.reloadUserInfo?.screenName,
+            email: authUser.email as string,
+            isNewUser: true,
+            role: "",
+            pfp_url: "",
+            photoURL: authUser.photoURL as string,
+            bio: "",
+            categories: [],
+            network: "" as any,
+            group: null,
+            campaigns: [],
+        };
+
+        await setDoc(doc(db, "users", authUser.uid), newUser);
+
+        useUserStore.setState({
+            user: newUser,
         });
     }
 };

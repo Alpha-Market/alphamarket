@@ -115,14 +115,14 @@ export default function Sidebar() {
 
             <div className="flex items-center gap-3">
                 <img
-                    src={user?.pfp_url}
+                    src={user?.photoURL || user?.pfp_url}
                     alt="User Profile Pic"
                     className="w-[40px] h-[40px] rounded-full"
                 />
 
                 <div className="flex-1 flex flex-col">
-                    <h4 className="text-secondary-1 text-[18px] font-semibold">
-                        {(user as any)?.name || ""}
+                    <h4 className="text-secondary-1 text-sm font-semibold">
+                        {user?.displayName || ""}
                     </h4>
                     <p className="text-secondary-1 text-sm font-normal">
                         {user?.email || ""}
