@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { FC, useRef, useState } from "react";
 import {
@@ -8,13 +10,29 @@ import {
     DialogTrigger,
 } from "@/components/UI/dialog";
 import Image from "next/image";
+import { waitForTransactionReceipt, writeContract } from "wagmi/actions";
+import { wagmiConfig } from "@/lib/wagmiConfig";
+import { SEPOLIA_GROUP_CAMPAIGNS_ABI } from "@/util/abi";
+import { useUserStore } from "@/store/user.store";
+import { useAccount } from "wagmi";
+import { sepolia } from "viem/chains";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
+import { v4 as uuid } from "uuid";
+import { doc, setDoc } from "firebase/firestore";
+import LoadingOverlay from "@/components/UI/common/LoadingOverlay";
 
 enum DIALOG_STATE {
     CREATE = "create",
     SUCCESS = "success",
 }
 
-export default function HostCreateNewEventDialog() {
+export default function CreateNewEventDialog() {
+    const user = useUserStore((state) => state.user);
+
+    const { address: walletAddress } = useAccount();
+
+    const [loading, setLoading] = useState(false);
     const [state, setState] = useState<DIALOG_STATE>(DIALOG_STATE.CREATE);
 
     const [group_photo, setGroupPhoto] = useState<File | null>(null);
@@ -23,27 +41,127 @@ export default function HostCreateNewEventDialog() {
     const [agenda, setAgenda] = useState("");
     const [event_date, setEventDate] = useState("");
     const [event_time, setEventTime] = useState("");
-    const [event_duration, setEventDuration] = useState("");
-    const [total_slots, setTotalSlots] = useState("");
-    const [price_per_slot, setPricePerSlot] = useState("");
+    const [event_duration, setEventDuration] = useState<number>();
+    const [total_slots, setTotalSlots] = useState<number>();
+    const [price_per_slot, setPricePerSlot] = useState<number>();
 
     const inputFileRef = useRef<HTMLInputElement>(null);
 
-    const handleSubmit = () => {
-        console.log({
-            title,
-            space_link,
-            agenda,
-            event_date,
-            event_time,
-            event_duration,
-            total_slots,
-            price_per_slot,
-        });
+    const reset = () => {
+        setGroupPhoto(null);
+        setTitle("");
+        setSpaceLink("");
+        setAgenda("");
+        setEventDate("");
+        setEventTime("");
+        setEventDuration(undefined);
+        setTotalSlots(undefined);
+        setPricePerSlot(undefined);
+    };
+
+    const handleSubmit = async () => {
+        setLoading(true);
+
+        const storageRef = ref(storage, `campaign_pfp/${group_photo?.name}`);
+        const metadata = {
+            contentType: group_photo?.type,
+        };
+
+        try {
+            const deadlineDate = new Date(`${event_date}T${event_time}:00Z`);
+            const deadline = Math.floor(deadlineDate.getTime() / 1000);
+
+            const txHash = await writeContract(wagmiConfig, {
+                abi: SEPOLIA_GROUP_CAMPAIGNS_ABI,
+                address: process.env
+                    .NEXT_PUBLIC_SEPOLIA_GROUP_CAMPAIGNS as `0x${string}`,
+                functionName: "createCampaign",
+                args: [
+                    user?.group?.contractAddress,
+                    walletAddress,
+                    title,
+                    deadline,
+                    total_slots,
+                    price_per_slot,
+                ],
+                chainId: sepolia.id,
+            });
+
+            // console.log({ txHash });
+
+            const txRes = await waitForTransactionReceipt(wagmiConfig, {
+                hash: txHash,
+                chainId: sepolia.id,
+            });
+
+            // console.log({ txRes });
+
+            const uploadTask = await uploadBytes(
+                storageRef,
+                group_photo!,
+                metadata
+            );
+            const pfp_url = await getDownloadURL(storageRef);
+
+            const campaignId = uuid();
+
+            await setDoc(
+                doc(db, "users", user?.id as string),
+                {
+                    campaigns: [
+                        {
+                            id: campaignId,
+                            pfp_url: pfp_url,
+                            title,
+                            space_link,
+                            agenda,
+                            event_date,
+                            event_time,
+                            event_duration,
+                            total_slots,
+                            price_per_slot,
+                        },
+                    ],
+                },
+                {
+                    merge: true,
+                }
+            );
+
+            useUserStore.setState({
+                user: {
+                    ...user,
+                    campaigns: [
+                        ...(user?.campaigns as any),
+                        {
+                            id: campaignId,
+                            pfp_url: pfp_url,
+                            title,
+                            space_link,
+                            agenda,
+                            event_date,
+                            event_time,
+                            event_duration,
+                            total_slots,
+                            price_per_slot,
+                        },
+                    ],
+                } as any,
+            });
+        } catch (err) {
+            console.log("[HostCreateNewEventDialog/handleSubmit] ", err);
+        }
+
+        setState(DIALOG_STATE.SUCCESS);
+        setLoading(false);
     };
 
     return (
-        <Dialog>
+        <Dialog
+            onOpenChange={() => {
+                reset();
+            }}
+        >
             <DialogTrigger>
                 <button className="p-3 bg-black rounded-lg">
                     <p className="text-white text-sm font-semibold -tracking-[.98px] uppercase">
@@ -52,7 +170,10 @@ export default function HostCreateNewEventDialog() {
                 </button>
             </DialogTrigger>
 
-            <DialogContent className="bg-[#1E1E1E] border border-card-2 shadow-[0px_4px_4px_0px_rgba(0_0_0_0.25)] py-8 px-4 rounded-[12px] max-h-[600px] flex flex-col">
+            <DialogContent className="dialog-base p-4 max-h-[600px] flex flex-col">
+                {/* Loading Screen */}
+                {loading && <LoadingOverlay size={50} />}
+
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                         <h4 className="text-white text-sm font-medium uppercase">
@@ -121,13 +242,13 @@ export default function HostCreateNewEventDialog() {
                                     </>
                                 ) : (
                                     <>
-                                        <p className="text-secondary text-xs font-bold uppercase">
+                                        <p className="text-secondary-1 text-xs font-bold uppercase">
                                             Add Photo
                                         </p>
 
                                         {/* Upload Icon */}
                                         <div
-                                            className="cursor-pointer relative z-[100]"
+                                            className="cursor-pointer relative z-20"
                                             onClick={() => {
                                                 inputFileRef.current?.click();
                                             }}
@@ -216,42 +337,50 @@ export default function HostCreateNewEventDialog() {
                             <FieldsWithLabel
                                 label="title"
                                 type="text"
+                                value={title}
                                 onChange={(v) => setTitle(v)}
                             />
                             <FieldsWithLabel
                                 label="space link"
                                 type="text"
+                                value={space_link}
                                 onChange={(v) => setSpaceLink(v)}
                             />
                             <FieldsWithLabel
                                 label="agenda"
                                 type="text"
+                                value={agenda}
                                 onChange={(v) => setAgenda(v)}
                             />
                             <FieldsWithLabel
                                 label="date"
                                 type="date"
+                                value={event_date}
                                 onChange={(v) => setEventDate(v)}
                             />
                             <FieldsWithLabel
                                 label="time (utc)"
                                 type="time"
+                                value={event_time}
                                 onChange={(v) => setEventTime(v)}
                             />
                             <FieldsWithLabel
-                                label="duration"
-                                type="text"
-                                onChange={(v) => setEventDuration(v)}
+                                label="duration (in minutes)"
+                                type="number"
+                                value={event_duration as number}
+                                onChange={(v) => setEventDuration(parseInt(v))}
                             />
                             <FieldsWithLabel
                                 label="amount of slots"
-                                type="text"
-                                onChange={(v) => setTotalSlots(v)}
+                                type="number"
+                                value={total_slots as number}
+                                onChange={(v) => setTotalSlots(parseInt(v))}
                             />
                             <FieldsWithLabel
                                 label="price/slot"
-                                type="text"
-                                onChange={(v) => setPricePerSlot(v)}
+                                type="number"
+                                value={price_per_slot as number}
+                                onChange={(v) => setPricePerSlot(parseInt(v))}
                             />
                         </div>
                     </>
@@ -262,24 +391,30 @@ export default function HostCreateNewEventDialog() {
                         <div className="flex-1 flex">
                             <div className="flex flex-col rounded-[12px] w-full overflow-hidden border-[1px] border-[#313131]">
                                 <div className="w-full relative flex flex-col">
-                                    <Image
-                                        src="/banner_test.png"
-                                        alt="banner image"
+                                    <img
+                                        src={
+                                            group_photo
+                                                ? URL.createObjectURL(
+                                                      group_photo as File
+                                                  )
+                                                : ""
+                                        }
+                                        alt="campaign banner image"
                                         width={100}
-                                        height={100}
-                                        className="w-full"
+                                        height={232}
+                                        className="w-full max-h-[232px] object-cover"
                                     />
 
                                     <div className="relative py-8 px-6 bg-black">
                                         <h2 className="text-white font-bold capitalize text-base">
-                                            Hello web3
+                                            {title}
                                         </h2>
                                         <div className="flex items-center gap-1">
                                             <span className="text-tertiary font-medium text-xs uppercase">
                                                 AGENDA
                                             </span>
                                             <span className="text-white font-medium text-xs capitalize">
-                                                Understanding web3
+                                                {agenda}
                                             </span>
                                         </div>
                                         <div
@@ -294,19 +429,19 @@ export default function HostCreateNewEventDialog() {
 
                                 <div className="flex gap-[10px] p-3 bg-[#1A1A1A]">
                                     <p className="text-[#A3A3A3] text-[10px] font-medium lowercase">
-                                        https://x.com/v../..yuw
+                                        {space_link}
                                     </p>
                                     <div className="bg-stroke-1 h-[18px] w-[1px]" />
                                     <p className="text-[#A3A3A3] text-[10px] font-medium">
-                                        Sunday, July 28
+                                        {event_date}
                                     </p>
                                     <div className="bg-stroke-1 h-[18px] w-[1px]" />
                                     <p className="text-[#A3A3A3] text-[10px] font-medium">
-                                        12:25
+                                        {event_time}
                                     </p>
                                     <div className="bg-stroke-1 h-[18px] w-[1px]" />
                                     <p className="text-[#A3A3A3] text-[10px] font-medium">
-                                        30 mins
+                                        {event_duration} mins
                                     </p>
                                 </div>
                             </div>
@@ -331,20 +466,22 @@ export default function HostCreateNewEventDialog() {
 
 type FieldsWithLabelProps = {
     label: string;
+    type: "date" | "time" | "text" | "number";
+    value: string | number;
     onChange: (v: string) => void;
-    type: "date" | "time" | "text";
 };
 
 const FieldsWithLabel: FC<FieldsWithLabelProps> = ({
     label,
     type,
+    value,
     onChange,
 }) => {
     return (
         <div className="flex flex-col gap-2">
             <label
                 htmlFor={label}
-                className="text-secondary text-xs font-normal uppercase"
+                className="text-secondary-1 text-xs font-normal uppercase"
             >
                 {label}
             </label>
@@ -352,6 +489,7 @@ const FieldsWithLabel: FC<FieldsWithLabelProps> = ({
             <input
                 id={label}
                 type={type}
+                value={value}
                 className="rounded-lg bg-card-1 p-3 text-white text-sm"
                 onChange={(e) => {
                     onChange(e.target.value);

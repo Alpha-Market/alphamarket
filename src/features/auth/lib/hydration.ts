@@ -14,7 +14,8 @@ export const hydrateNewUser = async (authUser: FirebaseAuthUser) => {
         categories: [],
         network: "" as any,
         pfp_url: "",
-        groups: [],
+        group: null,
+        campaigns: []
     };
 
     await setDoc(doc(db, "users", authUser.uid), newUser);
@@ -38,6 +39,8 @@ export const hydrateOldUser = async (authUser: FirebaseAuthUser) => {
                 bio: "",
                 categories: [],
                 network: "" as any,
+                group: null,
+                campaigns: []
             },
         });
     }

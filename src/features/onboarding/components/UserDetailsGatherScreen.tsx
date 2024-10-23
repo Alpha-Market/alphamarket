@@ -9,8 +9,9 @@ import { doc, setDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import OnBoardLayout from "@/components/Layout/OnBoardLayout";
 import { cn } from "@/lib/utils";
+import LoadingOverlay from "@/components/UI/common/LoadingOverlay";
 
-const HostFanDetailsScreen = ({
+const UserDetailsGatherScreen = ({
     onBack,
     onComplete,
 }: {
@@ -19,14 +20,22 @@ const HostFanDetailsScreen = ({
 }) => {
     const user = useUserStore((state) => state.user);
 
-    const [selectedCatergories, setSelectedCatergories] = useState<Catergories[]>(user?.categories || []);
-    const [selectedNetwork, setSelectedNetwork] = useState<Networks | "">(user?.network || Networks.MERLIN);
+    const [loading, setLoading] = useState(false);
+
+    const [selectedCatergories, setSelectedCatergories] = useState<
+        Catergories[]
+    >(user?.categories || []);
+    const [selectedNetwork, setSelectedNetwork] = useState<Networks | "">(
+        user?.network || Networks.MERLIN
+    );
 
     const [pfp, setPFP] = useState<File | null>(null);
     const [user_bio, setUserBio] = useState(user?.bio || "");
     const inputFileRef = useRef<HTMLInputElement>(null);
 
     const handleSumbit = async () => {
+        setLoading(true);
+
         const storageRef = ref(storage, `host_pfp/${pfp?.name}`);
         const metadata = {
             contentType: pfp?.type,
@@ -43,6 +52,7 @@ const HostFanDetailsScreen = ({
                     categories: selectedCatergories,
                     network: selectedNetwork,
                     bio: user_bio,
+                    isNewUser: user?.role === UserRole.Host ? true : false,
                 },
                 {
                     merge: true,
@@ -64,6 +74,8 @@ const HostFanDetailsScreen = ({
             toast.error("Something went wrong");
             console.log("[HostFanDetailsScreen.tsx/handleSubmit]", err);
         }
+
+        setLoading(false);
     };
 
     const isSubmitDisabled = () => {
@@ -74,7 +86,9 @@ const HostFanDetailsScreen = ({
 
     return (
         <OnBoardLayout>
-            <div className="sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] bg-card-1 w-full sm:max-w-full max-w-[422px] border border-stroke-1 sm:rounded-b-none rounded-xl p-4 flex flex-col gap-4">
+            <div className="dialog-base sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] w-full sm:max-w-full max-w-[422px] sm:rounded-b-none p-4 flex flex-col gap-4">
+                {loading && <LoadingOverlay size={50} />}
+
                 <div className="flex items-center justify-between border-b border-b-stroke-1 pb-4">
                     {/* Back Icon */}
                     <div className="cursor-pointer" onClick={onBack}>
@@ -329,7 +343,9 @@ const HostFanDetailsScreen = ({
                     disabled={isSubmitDisabled()}
                     className={cn(
                         "text-black font-semibold text-sm uppercase p-3 rounded-lg",
-                        isSubmitDisabled() ? "bg-white/50 cursor-not-allowed" : "bg-white cursor-pointer"
+                        isSubmitDisabled()
+                            ? "bg-white/50 cursor-not-allowed"
+                            : "bg-white cursor-pointer"
                     )}
                     onClick={handleSumbit}
                 >
@@ -340,7 +356,7 @@ const HostFanDetailsScreen = ({
     );
 };
 
-export default HostFanDetailsScreen;
+export default UserDetailsGatherScreen;
 
 type CatergoryChipProps = {
     text: string;
@@ -355,23 +371,20 @@ const CatergoryChip: FC<CatergoryChipProps> = ({
     selectedCatergories,
     setSelectedCatergories,
 }) => {
-
     const isSelected = selectedCatergories.includes(type);
 
     return (
         <button
             className={cn(
                 "flex items-center gap-[10px] border rounded-lg p-3",
-                isSelected
-                    ? "border-white"
-                    : "border-stroke-1"
+                isSelected ? "border-white" : "border-stroke-1"
             )}
             onClick={() => {
-                if(isSelected){
-                    const t = selectedCatergories.filter(v => v != type);
+                if (isSelected) {
+                    const t = selectedCatergories.filter((v) => v != type);
                     setSelectedCatergories([...t]);
-                }else{
-                    setSelectedCatergories([...selectedCatergories,type]);
+                } else {
+                    setSelectedCatergories([...selectedCatergories, type]);
                 }
             }}
         >

@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+import LoadingOverlay from "@/components/UI/common/LoadingOverlay";
 import useAuth from "@/features/auth/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -8,41 +9,41 @@ import { useState } from "react";
 const LoginFormDialog = () => {
     const router = useRouter();
 
+    const [loading, setLoading] = useState(false);
     const [isNewUser, setIsNewUser] = useState(true);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const { signUp, signIn } = useAuth();
 
-    const handleLogin = () => {
-        if (isNewUser) {
-            signUp(email, password)
-                .then(() => {
-                    router.push("/onboarding");
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            signIn(email, password)
-                .then(() => {
-                    router.push("/home?tab=home");
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
+    const handleLogin = async () => {
+        setLoading(true);
+
+        try {
+            if (isNewUser) {
+                await signUp(email, password);
+                router.push("/onboarding");
+            } else {
+                await signIn(email, password);
+                router.push("/home?tab=home");
+            }
+        } catch (err) {
+            console.log(err);
         }
+
+        setLoading(false);
     };
 
     return (
         <div className="sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] bg-card-1 w-full sm:max-w-full max-w-[422px] border border-stroke-1 sm:rounded-b-none rounded-xl p-4 flex flex-col gap-4">
+            {loading && <LoadingOverlay size={50} />}
             <div className="p-3 border border-stroke-1 rounded-lg flex items-center w-max gap-[10px]">
                 <button
                     className={cn(
                         "text-base",
                         isNewUser
                             ? "text-white font-bold"
-                            : "text-secondary font-normal"
+                            : "text-secondary-1 font-normal"
                     )}
                     onClick={() => {
                         setIsNewUser(true);
@@ -56,7 +57,7 @@ const LoginFormDialog = () => {
                         "text-base",
                         !isNewUser
                             ? "text-white font-bold"
-                            : "text-secondary font-normal"
+                            : "text-secondary-1 font-normal"
                     )}
                     onClick={() => {
                         setIsNewUser(false);
@@ -74,7 +75,7 @@ const LoginFormDialog = () => {
             >
                 <div className="flex flex-col gap-2">
                     <label
-                        className="text-secondary text-xs font-normal uppercase"
+                        className="text-secondary-1 text-xs font-normal uppercase"
                         htmlFor="emailField"
                     >
                         Email
@@ -92,7 +93,7 @@ const LoginFormDialog = () => {
 
                 <div className="flex flex-col gap-2">
                     <label
-                        className="text-secondary text-xs font-normal uppercase"
+                        className="text-secondary-1 text-xs font-normal uppercase"
                         htmlFor="passwordField"
                     >
                         Password
@@ -111,7 +112,7 @@ const LoginFormDialog = () => {
                 <div className="w-full h-[1px] bg-stroke-1" />
 
                 {isNewUser && (
-                    <p className="text-secondary text-[10px] font-normal uppercase">
+                    <p className="text-secondary-1 text-[10px] font-normal uppercase">
                         By clicking Agree & Join, you agree to the ___ User
                         Agreement, Privacy Policy, and Cookie Policy.
                     </p>

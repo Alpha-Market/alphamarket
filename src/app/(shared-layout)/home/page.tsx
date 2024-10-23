@@ -1,3 +1,4 @@
+import HostDiscoverScreen from "@/features/host/components/HostDiscoverScreen";
 import { TABS } from "@/util/constants";
 import { type Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -44,9 +45,9 @@ export default function HomePage({ searchParams }: Props) {
     const tab = searchParams.tab;
 
     if (tab == TABS[0]) {
-        return <div>Home</div>;
-    } else if (tab == TABS[1]) {
         return <HostProfileScreen />;
+    } else if (tab == TABS[1]) {
+        return <HostDiscoverScreen />;
     } else if (tab == TABS[2]) {
         return <HostFirstMessage />;
     }

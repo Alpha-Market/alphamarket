@@ -14,18 +14,9 @@ export const getUserInfo = async () => {
                 uid: string;
                 email: string;
             };
-            
-            const userInfo = await admin
-                .firestore()
-                .collection("users")
-                .doc(decodedToken.uid)
-                .get();
 
-            if (userInfo.exists) {
-                return userInfo.data() as User;
-            }
-
-            return null;
+            const userInfo = await getUserById(decodedToken.uid);
+            return userInfo;
         } catch (err) {
             console.log("err in Rootlayout.tsx -> ", err);
             return null;
@@ -33,4 +24,14 @@ export const getUserInfo = async () => {
     } else {
         return null;
     }
+};
+
+export const getUserById = async (id: string) => {
+    const userInfo = await admin.firestore().collection("users").doc(id).get();
+
+    if (userInfo.exists) {
+        return userInfo.data() as User;
+    }
+
+    return null;
 };

@@ -12,6 +12,15 @@ body {
     overscroll-behavior: none;
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
 @layer base {
     :root {
         --background: 0 0% 100%;
@@ -78,11 +87,15 @@ body {
 }
 
 @layer components {
-  .button-primary-base {
-    @apply text-black font-semibold text-sm uppercase p-3 rounded-lg bg-white cursor-pointer
-  }
+    .button-primary-base {
+        @apply text-black font-semibold text-sm uppercase p-3 rounded-lg bg-white cursor-pointer;
+    }
 
-  .button-primary-disabled:disabled {
-    @apply !bg-white/50 !cursor-not-allowed
-  }
+    .button-primary-disabled:disabled {
+        @apply !bg-white/50 !cursor-not-allowed;
+    }
+
+    .dialog-base {
+        @apply !bg-[#1E1E1E] !border !border-card-2 !shadow-[0px_4px_4px_0px_rgba(0_0_0_0.25)] !rounded-xl
+    }
 }

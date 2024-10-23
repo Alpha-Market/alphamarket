@@ -14,7 +14,7 @@ export default function Sidebar() {
     const tab = useSearchParams().get("tab");
 
     return (
-        <div className="w-[280px] flex flex-col justify-between py-6 pl-6">
+        <div className="w-[280px] flex flex-col justify-between py-6 pl-6 max-h-[calc(100vh-70px)]">
             <ul className="flex flex-col gap-3">
                 <li
                     className={ListItemCSSClass}
@@ -41,7 +41,7 @@ export default function Sidebar() {
                             "text-xl",
                             tab == TABS[0]
                                 ? "text-white font-bold"
-                                : "text-secondary font-normal"
+                                : "text-secondary-1 font-normal"
                         )}
                     >
                         Home
@@ -73,7 +73,7 @@ export default function Sidebar() {
                             "text-xl",
                             tab == TABS[1]
                                 ? "text-white font-bold"
-                                : "text-secondary font-normal"
+                                : "text-secondary-1 font-normal"
                         )}
                     >
                         Hosts
@@ -105,7 +105,7 @@ export default function Sidebar() {
                             "text-xl",
                             tab == TABS[2]
                                 ? "text-white font-bold"
-                                : "text-secondary font-normal"
+                                : "text-secondary-1 font-normal"
                         )}
                     >
                         Chats
@@ -113,7 +113,7 @@ export default function Sidebar() {
                 </li>
             </ul>
 
-            <div className=" flex items-center gap-3">
+            <div className="flex items-center gap-3">
                 <img
                     src={user?.pfp_url}
                     alt="User Profile Pic"
@@ -121,10 +121,10 @@ export default function Sidebar() {
                 />
 
                 <div className="flex-1 flex flex-col">
-                    <h4 className="text-secondary text-[18px] font-semibold">
+                    <h4 className="text-secondary-1 text-[18px] font-semibold">
                         {(user as any)?.name || ""}
                     </h4>
-                    <p className="text-secondary text-sm font-normal">
+                    <p className="text-secondary-1 text-sm font-normal">
                         {user?.email || ""}
                     </p>
                 </div>

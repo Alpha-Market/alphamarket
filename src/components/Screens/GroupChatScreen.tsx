@@ -38,7 +38,7 @@ const HostFirstMessage = () => {
 
                 <div className="flex-1 flex items-center gap-3">
                     <div className="bg-card-2 w-[32px] h-[32px] rounded-[4px]" />
-                    <p className="text-secondary text-xs font-medium">
+                    <p className="text-secondary-1 text-xs font-medium">
                         Alex Block
                     </p>
                 </div>
@@ -157,11 +157,11 @@ const MessageChip = ({ m }: { m: Message }) => {
         <div className="flex flex-col w-full">
             <div className="flex flex-col items-end gap-4">
                 <div className="flex items-center gap-3">
-                    <span className="text-secondary text-xs uppercase font-medium">
+                    <span className="text-secondary-1 text-xs uppercase font-medium">
                         {m.timestamp}
                     </span>
                     <div className="w-8 h-8 bg-card-1 rounded-[4px]"></div>
-                    <span className="text-secondary text-xs uppercase font-medium">
+                    <span className="text-secondary-1 text-xs uppercase font-medium">
                         {m.author}
                     </span>
                 </div>
@@ -172,7 +172,7 @@ const MessageChip = ({ m }: { m: Message }) => {
             <div className="flex flex-col items-start gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-card-1 rounded-[4px]"></div>
-                    <span className="text-secondary text-xs uppercase font-medium">
+                    <span className="text-secondary-1 text-xs uppercase font-medium">
                         Point system
                     </span>
                 </div>
@@ -191,7 +191,7 @@ const MessageChip = ({ m }: { m: Message }) => {
                         />
                     </svg>
 
-                    <span className="text-secondary text-xs font-medium">
+                    <span className="text-secondary-1 text-xs font-medium">
                         +12 Credited
                     </span>
                 </button>

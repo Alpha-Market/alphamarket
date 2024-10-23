@@ -6,6 +6,7 @@ const config: Config = {
         "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+        "./src/features/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/app/global.css"
     ],
     theme: {
@@ -19,7 +20,7 @@ const config: Config = {
                 "card-1": "rgba(255, 255, 255, 0.05)",
                 "card-2": "rgba(255, 255, 255, 0.10)",
                 "stroke-1": "rgba(255, 255, 255, 0.10)",
-                secondary: "rgba(255, 255, 255, 0.60)",
+                "secondary-1": "rgba(255, 255, 255, 0.60)",
                 tertiary: "rgba(255, 255, 255, 0.40)",
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",

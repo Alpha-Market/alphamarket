@@ -9,15 +9,15 @@ import {
     SEPOLIA_EXPONENTIAL_BONDING_CURVE_ABI,
     SEPOLIA_EXPONENTIAL_TOKEN_ABI,
 } from "@/util/abi";
-import { POLYGON_EXPONENTIAL_TOKEN_BYTECODE, SEPOLIA_EXPONENTIAL_TOKEN_BYTECODE } from "@/util/bytecode";
+import { SEPOLIA_EXPONENTIAL_TOKEN_BYTECODE } from "@/util/bytecode";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { v4 as uuid } from "uuid";
-import { polygonZkEvmCardona, sepolia } from "wagmi/chains";
 import { useAccount, useReadContract } from "wagmi";
 import { deployContract, waitForTransactionReceipt } from "wagmi/actions";
+import { sepolia } from "wagmi/chains";
 
 const HostCreateGroup = ({
     onBack,
@@ -39,9 +39,9 @@ const HostCreateGroup = ({
     const { data: initialReserveValue } = useReadContract({
         abi: SEPOLIA_EXPONENTIAL_BONDING_CURVE_ABI,
         address: process.env
-            .NEXT_PUBLIC_POLYGON_EXPONENTIAL_PROXY as `0x${string}`,
+            .NEXT_PUBLIC_SEPOLIA_EXPONENTIAL_PROXY as `0x${string}`,
         functionName: "initialReserve",
-        chainId: polygonZkEvmCardona.id,
+        chainId: sepolia.id,
     });
 
     const handleSumbit = async () => {
@@ -52,19 +52,18 @@ const HostCreateGroup = ({
 
         try {
             console.log("Deploy Contract");
-            console.log(process.env.NEXT_PUBLIC_POLYGON_EXPONENTIAL_PROXY);
 
             const deployedContractTxHash = await deployContract(wagmiConfig, {
                 abi: SEPOLIA_EXPONENTIAL_TOKEN_ABI,
                 args: [
                     group_name,
                     group_ticker,
-                    process.env.NEXT_PUBLIC_POLYGON_EXPONENTIAL_PROXY,
+                    process.env.NEXT_PUBLIC_SEPOLIA_EXPONENTIAL_PROXY,
                     userWalletAddress,
                 ],
-                bytecode: POLYGON_EXPONENTIAL_TOKEN_BYTECODE,
+                bytecode: SEPOLIA_EXPONENTIAL_TOKEN_BYTECODE,
                 value: initialReserveValue as bigint,
-                chainId: polygonZkEvmCardona.id,
+                chainId: sepolia.id,
             });
 
             console.log({ deployedContractTxHash });
@@ -94,6 +93,8 @@ const HostCreateGroup = ({
                     description: group_description,
                     contractAddress: txRes.contractAddress,
                 },
+            }, {
+                merge: true
             });
 
             useUserStore.setState({
@@ -127,7 +128,7 @@ const HostCreateGroup = ({
     return (
         <OnBoardLayout>
             {/* Box */}
-            <div className="sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] bg-card-1 w-full sm:max-w-full max-w-[422px] border border-stroke-1 sm:rounded-b-none rounded-xl p-4 flex flex-col gap-4">
+            <div className="dialog-base sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] w-full sm:max-w-full max-w-[422px] sm:rounded-b-none p-4 flex flex-col gap-4">
                 <div className="flex items-center justify-between border-b border-b-stroke-1 pb-4">
                     {/* Back Icon */}
                     <div className="cursor-pointer" onClick={onBack}>
@@ -201,7 +202,7 @@ const HostCreateGroup = ({
                         </>
                     ) : (
                         <>
-                            <p className="text-secondary text-xs font-bold uppercase">
+                            <p className="text-secondary-1 text-xs font-bold uppercase">
                                 Add Photo
                             </p>
 
@@ -293,7 +294,7 @@ const HostCreateGroup = ({
                 <div className="flex flex-col gap-2">
                     <label
                         htmlFor="bio"
-                        className="text-secondary text-xs font-normal uppercase"
+                        className="text-secondary-1 text-xs font-normal uppercase"
                     >
                         name
                     </label>
@@ -310,7 +311,7 @@ const HostCreateGroup = ({
                 <div className="flex flex-col gap-2">
                     <label
                         htmlFor="bio"
-                        className="text-secondary text-xs font-normal uppercase"
+                        className="text-secondary-1 text-xs font-normal uppercase"
                     >
                         Ticker
                     </label>
@@ -327,7 +328,7 @@ const HostCreateGroup = ({
                 <div className="flex flex-col gap-2 border-b border-b-stroke-1 pb-4">
                     <label
                         htmlFor="bio"
-                        className="text-secondary text-xs font-normal uppercase"
+                        className="text-secondary-1 text-xs font-normal uppercase"
                     >
                         Description{" "}
                     </label>
