@@ -24,7 +24,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node_modules-
 
-      # Pre auth gcloud
+      # Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -32,28 +32,28 @@ jobs:
 
       # Setup Google Cloud SDK
       - name: Setup Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2 # Use the latest version
+        uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           install_components: 'gcloud' 
+
       # Build Docker image
       - name: Build Docker image
         run: |
           docker build \
             --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }} \
-            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app:${{ github.sha }} .
+            -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/alphamarket/nextjs-app:${{ github.sha }} .
 
-      # Push Docker image to Google Container Registry
+      # Push Docker image to Google Artifact Registry
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/alphamarket/nextjs-app:${{ github.sha }}
-
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/alphamarket/nextjs-app:${{ github.sha }}
 
       # Deploy to Cloud Run with environment variables
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ secrets.CLOUD_RUN_SERVICE }} \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app:${{ github.sha }} \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/alphamarket/nextjs-app:${{ github.sha }} \
             --region ${{ secrets.REGION }} \
             --platform managed \
             --allow-unauthenticated \
