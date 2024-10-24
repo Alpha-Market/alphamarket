@@ -26,11 +26,11 @@ jobs:
 
       # Setup Google Cloud SDK
       - name: Setup Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v2 # Use the latest version
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          install_components: 'gcloud' # Explicitly install gcloud
 
       # Build Docker image
       - name: Build Docker image
