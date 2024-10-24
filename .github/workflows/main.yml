@@ -25,6 +25,8 @@ jobs:
 
     # Build Docker image without passing secrets
     - name: Build Docker image
+      env:
+        NEXT_PUBLIC_SKIP_FIREBASE: true 
       run: |
         docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app:${{ github.sha }} .
 
