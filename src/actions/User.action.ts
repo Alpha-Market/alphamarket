@@ -9,7 +9,11 @@ export const hydrateNewUser = async (authUser: FirebaseAuthUser) => {
         id: authUser.uid,
         email: authUser.email || '',
         isNewUser: true,
-        role: ""
+        role: "",
+        pfp_url: "",
+        categories: "",
+        network: "",
+        bio: ""
     };
 
     await setDoc(doc(db, "users", authUser.uid), newUser);
@@ -28,7 +32,11 @@ export const hydrateOldUser = async (authUser: FirebaseAuthUser) => {
                 id: authUser.uid,
                 email: authUser.email as string,
                 isNewUser: true,
-                role: ""
+                role: "",
+                pfp_url: "",
+                categories: "",
+                network: "",
+                bio: ""
             }
         });
     }

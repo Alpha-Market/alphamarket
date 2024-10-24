@@ -1,7 +1,6 @@
 "use client";
 
 import { FC, PropsWithChildren } from 'react';
-import AuthProvider from './AuthProvider';
 import ErrorBoundary from '../components/Util/ErrorBoundary';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
