@@ -23,21 +23,41 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    # Build the Docker image from the Dockerfile
+    # Build Docker image without passing secrets
     - name: Build Docker image
       run: |
         docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app:${{ github.sha }} .
 
-    # Push the Docker image to Google Container Registry
+    # Push Docker image to Google Container Registry
     - name: Push Docker image
       run: |
         docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app:${{ github.sha }}
 
-    # Deploy to Cloud Run
+    # Deploy to Cloud Run with environment variables
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy ${{ secrets.CLOUD_RUN_SERVICE }} \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app:${{ github.sha }} \
           --region ${{ secrets.REGION }} \
           --platform managed \
-          --allow-unauthenticated
+          --allow-unauthenticated \
+          --set-env-vars ALPHA_MARKET=${{ secrets.ALPHA_MARKET }} \
+          --set-env-vars ALPHA_TOKEN=${{ secrets.ALPHA_TOKEN }} \
+          --set-env-vars EXPONENTIAL_BONDING_CURVE=${{ secrets.EXPONENTIAL_BONDING_CURVE }} \
+          --set-env-vars EXPONENTIAL_PROXY=${{ secrets.EXPONENTIAL_PROXY }} \
+          --set-env-vars EXPONENTIAL_TOKEN=${{ secrets.EXPONENTIAL_TOKEN }} \
+          --set-env-vars LINEAR_BONDING_CURVE=${{ secrets.LINEAR_BONDING_CURVE }} \
+          --set-env-vars LINEAR_PROXY=${{ secrets.LINEAR_PROXY }} \
+          --set-env-vars NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }} \
+          --set-env-vars NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }} \
+          --set-env-vars NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }} \
+          --set-env-vars NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }} \
+          --set-env-vars NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }} \
+          --set-env-vars NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }} \
+          --set-env-vars NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }} \
+          --set-env-vars NEXT_PUBLIC_TWITTER_API_KEY=${{ secrets.NEXT_PUBLIC_TWITTER_API_KEY }} \
+          --set-env-vars NEXT_PUBLIC_TWITTER_SECRET_KEY=${{ secrets.NEXT_PUBLIC_TWITTER_SECRET_KEY }} \
+          --set-env-vars SEPOLIA_EXPONENTIAL_BONDING_CURVE=${{ secrets.SEPOLIA_EXPONENTIAL_BONDING_CURVE }} \
+          --set-env-vars SEPOLIA_EXPONENTIAL_PROXY=${{ secrets.SEPOLIA_EXPONENTIAL_PROXY }} \
+          --set-env-vars SEPOLIA_EXPONENTIAL_TOKEN=${{ secrets.SEPOLIA_EXPONENTIAL_TOKEN }} \
+          --set-env-vars TIME_LOCK=${{ secrets.TIME_LOCK }}
