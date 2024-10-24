@@ -24,6 +24,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node_modules-
 
+      # Pre auth gcloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       # Setup Google Cloud SDK
       - name: Setup Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2 # Use the latest version
