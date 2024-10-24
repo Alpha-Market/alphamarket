@@ -46,7 +46,8 @@ jobs:
       # Push Docker image to Google Container Registry
       - name: Push Docker image
         run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/nextjs-app:${{ github.sha }}
+          docker push ${{ secrets.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/alphamarket/nextjs-app:${{ github.sha }}
+
 
       # Deploy to Cloud Run with environment variables
       - name: Deploy to Cloud Run
