@@ -1,11 +1,17 @@
 "use client";
 
 import { useUserStore } from "@/store/user.store";
-import { User } from "@/types";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
-export default function HostDetailsBlock({ hostInfo }: { hostInfo?: User }) {
-    const user = useUserStore((state) => state.user);
+export default function HostDetailsBlock() {
+    const pathname = usePathname();
+    const hostInfo = useUserStore((state) => state.hostInfo);
+    let user = useUserStore((state) => state.user);
+
+    if (hostInfo && pathname === "/host") {
+        user = hostInfo;
+    }
 
     return (
         <div className="flex flex-col">
@@ -47,15 +53,15 @@ export default function HostDetailsBlock({ hostInfo }: { hostInfo?: User }) {
                         </a>
                     )}
 
-                    {user?.displayName && (
+                    {
                         <p className="text-white text-base font-medium">
-                            {user?.displayName}
+                            {user?.displayName || user?.email}
                         </p>
-                    )}
+                    }
 
                     <div className="flex items-center gap-1">
                         {user?.categories.map((c) => (
-                            <CategoryChip category={c} />
+                            <CategoryChip category={c} key={c} />
                         ))}
                     </div>
                 </div>

@@ -87,7 +87,9 @@ const UserDetailsGatherScreen = ({
     return (
         <OnBoardLayout>
             <div className="dialog-base sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] w-full sm:max-w-full max-w-[422px] sm:rounded-b-none p-4 flex flex-col gap-4">
-                {loading && <LoadingOverlay size={50} />}
+                {loading && (
+                    <LoadingOverlay size={50} className="rounded-[12px]" />
+                )}
 
                 <div className="flex items-center justify-between border-b border-b-stroke-1 pb-4">
                     {/* Back Icon */}

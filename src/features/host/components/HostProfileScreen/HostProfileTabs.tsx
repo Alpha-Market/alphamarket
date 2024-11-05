@@ -6,9 +6,15 @@ import { useRef, useState } from "react";
 import EventList from "./EventList";
 import ReviewList from "./ReviewList";
 
-const TABS = ["events", "reviews", "details"];
+const PRIVATE_VIEW_TABS = ["events", "reviews"];
+const PUBLIC_VIEW_TABS = ["reviews"];
 
-export default function HostProfileTabs() {
+export default function HostProfileTabs({
+    onHostPage,
+}: {
+    onHostPage: boolean;
+}) {
+    const TABS = onHostPage ? PUBLIC_VIEW_TABS : PRIVATE_VIEW_TABS;
     const [selectedTab, setSelectedTab] = useState(TABS[0]);
 
     const dragConstraintRef = useRef<HTMLDivElement>(null);
@@ -16,23 +22,28 @@ export default function HostProfileTabs() {
 
     const control = useAnimation();
 
-    const paginate = (direction: number) => {
-        if (direction === 1) {
-            control.start({
-                x: -dragConstraintRef.current!
-                    .clientWidth /* transition: { duration: 0 } */,
-            });
-            posRef.current = 1;
-            // setI(1)
+    const renderTabs = () => {
+        if (onHostPage) {
+            switch (selectedTab) {
+                case TABS[0]:
+                    return <ReviewList />;
+                case TABS[1]:
+                    return <div>Details Tabs</div>;
+            }
         } else {
-            control.start({ x: 0 /* transition: { duration: 0 } */ });
-            // setI(0)
-            posRef.current = 0;
+            switch (selectedTab) {
+                case TABS[0]:
+                    return <EventList />;
+                case TABS[1]:
+                    return <ReviewList />;
+                case TABS[2]:
+                    return <div>Details Tab</div>;
+            }
         }
     };
 
     return (
-        <div className="mt-7 flex flex-col" ref={dragConstraintRef}>
+        <div className="mt-7 flex flex-col flex-1" ref={dragConstraintRef}>
             <ul className="flex items-center gap-3 border-b border-stroke-1">
                 {TABS.map((tab) => (
                     <li
@@ -88,11 +99,9 @@ export default function HostProfileTabs() {
                             });
                         }
                     }}
-                    className="text-white"
+                    className="text-white h-full"
                 >
-                    {selectedTab === TABS[0] && <EventList />}
-                    {selectedTab === TABS[1] && <ReviewList />}
-                    {selectedTab === TABS[2] && <div>Details Tab</div>}
+                    {renderTabs()}
                 </motion.div>
             </AnimatePresence>
         </div>

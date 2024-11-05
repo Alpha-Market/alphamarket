@@ -1,20 +1,32 @@
+import { useUserStore } from "@/store/user.store";
+import { Campaign } from "@/types";
 import Image from "next/image";
 
 export default function EventList() {
+    const user = useUserStore((state) => state.user);
+
+    console.log({user});
+    
     return (
         <div className="grid grid-cols-2 sm:flex sm:flex-col">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e) => (
-                <Event />
-            ))}
+            {user?.campaigns &&
+                typeof user.campaigns === "object" &&
+                user?.campaigns.map((campaign) => (
+                    <Event
+                        key={campaign.id}
+                        event={campaign}
+                        hostName={user.displayName || user.email}
+                    />
+                ))}
         </div>
     );
 }
 
-const Event = () => {
+const Event = ({ event, hostName }: { event: Campaign; hostName: string }) => {
     return (
         <div className="px-3 py-6 flex flex-col border first-of-type:border-t-0 border-stroke-1">
             <Image
-                src="/banner_test.png"
+                src={event.pfp_url}
                 alt="Event Banner Image"
                 width={1}
                 height={69}
@@ -22,25 +34,24 @@ const Event = () => {
             />
 
             <h3 className="text-white text-base font-medium mb-3">
-                Ordinals & ZK apps
+                {event.title}
             </h3>
 
             <div className="flex items-center gap-3 mb-3">
                 <p className="text-secondary-1 text-xs font-medium uppercase">
-                    HOST{" "}
-                    <span className="text-white">Alex Block</span>
+                    HOST <span className="text-white">{hostName}</span>
                 </p>
 
                 <span className="w-[1px] h-2 bg-stroke-1" />
 
                 <p className="text-secondary-1 text-xs font-medium uppercase">
-                    02/12
+                    {event.event_date}
                 </p>
 
                 <span className="w-[1px] h-2 bg-stroke-1" />
 
                 <p className="text-secondary-1 text-xs font-medium uppercase">
-                    6PM EST
+                    {event.event_time} EST
                 </p>
             </div>
 

@@ -18,6 +18,8 @@ export type User = {
     bio: string;
     group: Group | null;
     campaigns: Campaign[];
+    reviews: Review[];
+    optedForEmailCampaign: boolean;
 };
 
 export type Group = {
@@ -42,6 +44,18 @@ export type Campaign = {
     price_per_slot: number;
 };
 
+export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
+
+export type Review = {
+    id: string;
+    reviewerUserId: string;
+    rating: Rating;
+    reviewerName: string;
+    reviewerRole: string;
+    review: string;
+    attestationUID: string;
+};
+
 export enum Catergories {
     GAMING = "gaming",
     DEFI = "defi",
@@ -51,5 +65,5 @@ export enum Catergories {
 
 export enum Networks {
     MERLIN = "merlin",
-    SEPOLIA = "sepolia"
+    SEPOLIA = "sepolia",
 }

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useUserStore } from "@/store/user.store";
 import { useRef, useState } from "react";
@@ -85,12 +85,12 @@ const HostFirstMessage = () => {
                         {messages.map((m, idx) => {
                             if (idx === messages.length - 1) {
                                 return (
-                                    <div className="" ref={scrollRef}>
+                                    <div key={m.value} ref={scrollRef}>
                                         <MessageChip m={m} />
                                     </div>
                                 );
                             } else {
-                                return <MessageChip m={m} />;
+                                return <MessageChip m={m} key={m.value} />;
                             }
                         })}
                     </div>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import * as jose from "jose";
 import { TABS } from "./util/constants";
+import axios from "axios";
 
 const PUBLIC_PATH = ["/", "/auth"];
 
@@ -9,41 +9,43 @@ export async function middleware(req: NextRequest) {
     const tab = req.nextUrl.searchParams.get("tab");
     const token = req.cookies.get("access_token")?.value;
 
+    console.log({ token });
+
     const isPublicPath = PUBLIC_PATH.includes(pathname);
 
-    if (token) {
-        try {
-            const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-            const { payload } = await jose.jwtVerify(token as string, secret);
+    if (token) {        
+        const res = await axios.post(`${req.nextUrl.origin}/api/auth/verify-jwt`, {
+            token
+        });
 
-            const requestHeaders = new Headers(req.headers);
-            requestHeaders.set("x-user-id", (payload as any).uid);
+        if (res.status === 200) {
+            const data = res.data;
+            const decodedToken = data["decodedToken"];
+            console.log({ decodedToken });
+
+            // const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+            // const { payload } = await jose.jwtVerify(token as string, secret);
+
+            // const requestHeaders = new Headers(req.headers);
+            // requestHeaders.set("x-user-id", (payload as any).uid);
 
             // After Token Verification if isPublicPath then redirect to /home
             if (isPublicPath) {
                 return NextResponse.redirect(
-                    new URL("/home?tab=home", req.url),
-                    {
-                        headers: requestHeaders,
-                    }
+                    new URL("/home?tab=home", req.url)
                 );
             }
 
             if (pathname === "/home" && !TABS.includes(tab as string)) {
                 return NextResponse.redirect(
-                    new URL("/home?tab=home", req.url),
-                    {
-                        headers: requestHeaders,
-                    }
+                    new URL("/home?tab=home", req.url)
                 );
             }
 
             // Otherwise, allow access to protected route
-            return NextResponse.next({
-                headers: requestHeaders,
-            });
-        } catch (error) {
-            console.error("JWT verification failed:", error);
+            return NextResponse.next();
+        } else {
+            console.error("JWT verification failed:", res.statusText);
 
             // If token verification fails, clear the token and redirect to /auth
             const response = NextResponse.redirect(new URL("/", req.url));
@@ -61,4 +63,4 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
     matcher: ["/", "/auth", "/home", "/onboarding", "/host"],
-};  
+};

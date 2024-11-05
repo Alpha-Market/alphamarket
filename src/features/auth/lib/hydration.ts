@@ -16,6 +16,8 @@ export const hydrateNewUser = async (authUser: FirebaseAuthUser) => {
         pfp_url: "",
         group: null,
         campaigns: [],
+        reviews: [],
+        optedForEmailCampaign: true,
     };
 
     await setDoc(doc(db, "users", authUser.uid), newUser);
@@ -29,20 +31,23 @@ export const hydrateOldUser = async (authUser: FirebaseAuthUser) => {
         const _u = docSnap.data();
         useUserStore.setState({ user: _u as User });
     } else {
-        useUserStore.setState({
-            user: {
-                id: authUser.uid,
-                email: authUser.email as string,
-                isNewUser: true,
-                role: "",
-                pfp_url: "",
-                bio: "",
-                categories: [],
-                network: "" as any,
-                group: null,
-                campaigns: [],
-            },
-        });
+        const newUser: User = {
+            id: authUser.uid,
+            email: authUser.email as string,
+            isNewUser: true,
+            role: "",
+            pfp_url: "",
+            bio: "",
+            categories: [],
+            network: "" as any,
+            group: null,
+            campaigns: [],
+            reviews: [],
+            optedForEmailCampaign: true,
+        };
+
+        await setDoc(doc(db, "users", authUser.uid), newUser);
+        useUserStore.setState({ user: newUser });
     }
 };
 
@@ -64,9 +69,11 @@ export const hydrateTwitterUser = async (authUser: FirebaseAuthUser) => {
             photoURL: authUser.photoURL as string,
             bio: "",
             categories: [],
+            reviews: [],
             network: "" as any,
             group: null,
             campaigns: [],
+            optedForEmailCampaign: true,
         };
 
         await setDoc(doc(db, "users", authUser.uid), newUser);

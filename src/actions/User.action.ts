@@ -1,36 +1,14 @@
-"use server";
-
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
-import admin from "@/lib/firebaseAdmin";
+import { db } from "@/lib/firebase";
 import { User } from "@/types";
+import { doc, getDoc } from "firebase/firestore";
 
-export const getUserInfo = async () => {
-    const token = cookies().get("access_token");
+export const getUserById = async (uid: string) => {
+    const docRef = doc(db, "users", uid);
 
-    if (token) {
-        try {
-            const decodedToken = jwt.decode(token.value) as {
-                uid: string;
-                email: string;
-            };
+    const docSnapshot = await getDoc(docRef);
 
-            const userInfo = await getUserById(decodedToken.uid);
-            return userInfo;
-        } catch (err) {
-            console.log("err in Rootlayout.tsx -> ", err);
-            return null;
-        }
-    } else {
-        return null;
-    }
-};
-
-export const getUserById = async (id: string) => {
-    const userInfo = await admin.firestore().collection("users").doc(id).get();
-
-    if (userInfo.exists) {
-        return userInfo.data() as User;
+    if (docSnapshot.exists()) {
+        return docSnapshot.data() as User;
     }
 
     return null;

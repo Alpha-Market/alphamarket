@@ -13,7 +13,7 @@ export default function LoadingOverlay({
     return (
         <div
             className={cn(
-                "absolute z-30 inset-0 bg-black/40 rounded-[12px] w-full h-full",
+                "absolute z-30 inset-0 bg-black/40 w-full h-full",
                 className
             )}
         >

@@ -22,25 +22,92 @@ import { v4 as uuid } from "uuid";
 import { doc, setDoc } from "firebase/firestore";
 import LoadingOverlay from "@/components/UI/common/LoadingOverlay";
 import { StartIconFill, StartIconOutline } from "@/util/Icons";
+import createAttestation from "@/features/attestation/lib/Attest";
+import { useEthersSigner } from "@/hooks/useEthersSigner";
+import { REVIEW_SCHEMA_ID_EAS } from "@/util/constants";
+import { Rating } from "@/types";
+import { RatingStarsEditable } from "../RatingStars";
 
 export default function CreateReviewDialog() {
+    const hostInfo = useUserStore((state) => state.hostInfo);
     const user = useUserStore((state) => state.user);
 
+    const [openDialog, setOpenDialog] = useState(false);
     const [loading, setLoading] = useState(false);
-
     const [review, setReview] = useState("");
-    const [rating, setRating] = useState<number>(0);
+    const [rating, setRating] = useState<Rating>(0);
+
+    const signer = useEthersSigner({ chainId: sepolia.id });
+    const { address: walletAddress } = useAccount();
 
     const reset = () => {
         setReview("");
         setRating(0);
     };
 
-    const handleSubmit = async () => {};
+    const handleSubmit = async () => {
+        setLoading(true);
+
+        const newAttestationUID = await createAttestation(
+            signer,
+            REVIEW_SCHEMA_ID_EAS,
+            walletAddress as string,
+            [
+                {
+                    name: "reviewerName",
+                    type: "string",
+                    value: (user?.displayName || user?.email) as string,
+                },
+                {
+                    name: "reviewerRole",
+                    type: "string",
+                    value: user?.role as string,
+                },
+                {
+                    name: "review",
+                    type: "string",
+                    value: review,
+                },
+            ]
+        );
+
+        const reviewId = uuid();
+
+        const t = {
+            id: reviewId,
+            rating: rating,
+            reviewerName: hostInfo?.displayName || hostInfo?.email,
+            reviewerRole: hostInfo?.role,
+            review: review,
+            attestationUID: newAttestationUID,
+        };
+
+        await setDoc(
+            doc(db, "users", hostInfo?.id as string),
+            {
+                reviews: [t],
+            },
+            {
+                merge: true,
+            }
+        );
+
+        useUserStore.setState({
+            user: {
+                ...user,
+                reviews: [...(user?.reviews as any), t],
+            } as any,
+        });
+
+        setLoading(false);
+        setOpenDialog(false);
+    };
 
     return (
         <Dialog
-            onOpenChange={() => {
+            open={openDialog}
+            onOpenChange={(_open) => {
+                setOpenDialog(_open);
                 reset();
             }}
         >
@@ -54,7 +121,9 @@ export default function CreateReviewDialog() {
 
             <DialogContent className="dialog-base p-4 max-h-[600px] flex flex-col">
                 {/* Loading Screen */}
-                {loading && <LoadingOverlay size={50} />}
+                {loading && (
+                    <LoadingOverlay size={50} className="rounded-[12px]" />
+                )}
 
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center justify-between">
@@ -82,7 +151,7 @@ export default function CreateReviewDialog() {
                 <div className="flex flex-col gap-[12px]">
                     <div className="flex items-center gap-[10px]">
                         <p className="text-base text-white font-medium">
-                            Alex Block
+                            {hostInfo?.displayName || hostInfo?.email}
                         </p>
 
                         <div className="px-2 bg-[#0FD850] rounded-full">
@@ -93,41 +162,10 @@ export default function CreateReviewDialog() {
                     </div>
 
                     <div className="flex items-center gap-1">
-                        {Array(5)
-                            .fill(0)
-                            .map((e, idx) => {
-                                const starNumber = idx + 1;
-
-                                if (starNumber <= rating) {
-                                    return (
-                                        <div
-                                            className="cursor-pointer"
-                                            onClick={() => {
-                                                if (starNumber === 1) {
-                                                    setRating(
-                                                        rating > 1 ? 1 : 0
-                                                    );
-                                                } else {
-                                                    setRating(starNumber);
-                                                }
-                                            }}
-                                        >
-                                            <StartIconFill />
-                                        </div>
-                                    );
-                                } else {
-                                    return (
-                                        <div
-                                            className="cursor-pointer"
-                                            onClick={() => {
-                                                setRating(starNumber);
-                                            }}
-                                        >
-                                            <StartIconOutline />
-                                        </div>
-                                    );
-                                }
-                            })}
+                        <RatingStarsEditable
+                            rating={rating}
+                            setRating={setRating}
+                        />
                     </div>
 
                     <p className="text-base text-white font-medium">

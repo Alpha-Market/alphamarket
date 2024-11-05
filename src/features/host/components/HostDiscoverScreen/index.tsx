@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import { cn, swipeConfidenceThreshold, swipePower } from "@/lib/utils";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useRef, useState } from "react";
 import HostList from "./HostList";
 
-const TABS = ["For you", "Trending", "Top", "Mutuals"];
+const TABS = ["For you"];
 
 export default function HostDiscoverScreen() {
     const [selectedTab, setSelectedTab] = useState(TABS[0]);

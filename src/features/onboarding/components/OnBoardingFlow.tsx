@@ -29,6 +29,11 @@ const OnBoardingFlow = () => {
     const [stage, setStage] = useState<FLOW_STAGE>(FLOW_STAGE.ROLE_SELECTION);
     const user = useUserStore((state) => state.user);
 
+    if (!user?.isNewUser) {
+        router.push("/home?tab=home");
+        return;
+    }
+
     return (
         <>
             {stage === FLOW_STAGE.ROLE_SELECTION && (
@@ -64,14 +69,12 @@ const OnBoardingFlow = () => {
                         setStage(FLOW_STAGE.USER_DETAILS);
                     }}
                     onComplete={() => {
-                        setStage(FLOW_STAGE.HOST_FIRST_MESSAGE);
+                        router.push("/home?tab=chats");
                     }}
                 />
             )}
 
             {stage === FLOW_STAGE.HOST_FIRST_MESSAGE && <HostFirstMessage />}
-
-            {stage === FLOW_STAGE.HOST_PROFILE && <HostProfileScreen />}
         </>
     );
 };

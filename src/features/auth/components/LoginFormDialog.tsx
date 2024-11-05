@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/UI/checkbox";
 import LoadingOverlay from "@/components/UI/common/LoadingOverlay";
 import useAuth from "@/features/auth/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,7 @@ const LoginFormDialog = () => {
 
     const [loading, setLoading] = useState(false);
     const [isNewUser, setIsNewUser] = useState(true);
+    const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -41,9 +43,21 @@ const LoginFormDialog = () => {
         setLoading(false);
     };
 
+    const checkLoginDisable = () => {
+        if (!email || !password) return true;
+
+        if (!isNewUser) return false;
+
+        if (hasAcceptedTerms) {
+            return false;
+        } else {
+            return true;
+        }
+    };
+
     return (
         <div className="dialog-base sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] w-full sm:max-w-full max-w-[422px] sm:rounded-b-none p-4 flex flex-col gap-4">
-            {loading && <LoadingOverlay size={50} />}
+            {loading && <LoadingOverlay size={50} className="rounded-[12px]"/>}
             <div className="p-3 border border-stroke-1 rounded-lg flex items-center w-max gap-[10px]">
                 <button
                     className={cn(
@@ -119,20 +133,42 @@ const LoginFormDialog = () => {
                 <div className="w-full h-[1px] bg-stroke-1" />
 
                 {isNewUser && (
-                    <p className="text-secondary-1 text-[10px] font-normal uppercase">
-                        By clicking Agree & Join, you agree to the ___ User
-                        Agreement, Privacy Policy, and Cookie Policy.
-                    </p>
+                    <div className="flex items-center gap-1">
+                        <Checkbox
+                            className="border-card-2"
+                            checked={hasAcceptedTerms}
+                            onCheckedChange={(checkBoxState: boolean) => {
+                                setHasAcceptedTerms(checkBoxState);
+                            }}
+                        />
+                        <p className="text-secondary-1 text-[10px] font-normal uppercase">
+                            Accept Terms and Conditions.
+                        </p>
+                    </div>
                 )}
 
                 <button
-                    className="w-full p-3 bg-white text-black text-sm uppercase font-semibold -tracking-[.98px] rounded-lg"
+                    disabled={checkLoginDisable()}
+                    className={cn(
+                        "w-full p-3 bg-white text-black text-sm uppercase font-semibold -tracking-[.98px] rounded-lg",
+                        checkLoginDisable() && "button-primary-disabled"
+                    )}
                     onClick={handleLogin}
                 >
                     {isNewUser ? "Agree & Join" : "Continue"}
                 </button>
                 <button
-                    className="w-full p-3 bg-white text-black text-sm uppercase font-semibold -tracking-[.98px] rounded-lg"
+                    disabled={
+                        isNewUser ? (hasAcceptedTerms ? false : true) : false
+                    }
+                    className={cn(
+                        "w-full p-3 bg-white text-black text-sm uppercase font-semibold -tracking-[.98px] rounded-lg",
+                        (isNewUser
+                            ? hasAcceptedTerms
+                                ? false
+                                : true
+                            : false) && "button-primary-disabled"
+                    )}
                     onClick={handleXLogin}
                 >
                     {"Continue with X"}

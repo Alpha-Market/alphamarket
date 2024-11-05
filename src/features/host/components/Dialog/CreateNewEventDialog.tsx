@@ -105,23 +105,23 @@ export default function CreateNewEventDialog() {
 
             const campaignId = uuid();
 
+            const t = {
+                id: campaignId,
+                pfp_url: pfp_url,
+                title,
+                space_link,
+                agenda,
+                event_date,
+                event_time,
+                event_duration,
+                total_slots,
+                price_per_slot,
+            };
+
             await setDoc(
                 doc(db, "users", user?.id as string),
                 {
-                    campaigns: [
-                        {
-                            id: campaignId,
-                            pfp_url: pfp_url,
-                            title,
-                            space_link,
-                            agenda,
-                            event_date,
-                            event_time,
-                            event_duration,
-                            total_slots,
-                            price_per_slot,
-                        },
-                    ],
+                    campaigns: [t],
                 },
                 {
                     merge: true,
@@ -131,21 +131,7 @@ export default function CreateNewEventDialog() {
             useUserStore.setState({
                 user: {
                     ...user,
-                    campaigns: [
-                        ...(user?.campaigns as any),
-                        {
-                            id: campaignId,
-                            pfp_url: pfp_url,
-                            title,
-                            space_link,
-                            agenda,
-                            event_date,
-                            event_time,
-                            event_duration,
-                            total_slots,
-                            price_per_slot,
-                        },
-                    ],
+                    campaigns: [...(user?.campaigns as any), t],
                 } as any,
             });
         } catch (err) {
@@ -172,7 +158,9 @@ export default function CreateNewEventDialog() {
 
             <DialogContent className="dialog-base p-4 max-h-[600px] flex flex-col">
                 {/* Loading Screen */}
-                {loading && <LoadingOverlay size={50} />}
+                {loading && (
+                    <LoadingOverlay size={50} className="rounded-[12px]" />
+                )}
 
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center justify-between">

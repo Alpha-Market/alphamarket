@@ -4,6 +4,8 @@ import { useUserStore } from "@/store/user.store";
 import { TABS } from "@/util/constants";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const ListItemCSSClass =
     "flex items-center gap-3 cursor-pointer hover:bg-gray-600 p-3 rounded-[8px]";
@@ -117,16 +119,26 @@ export default function Sidebar() {
                 <img
                     src={user?.photoURL || user?.pfp_url}
                     alt="User Profile Pic"
-                    className="w-[40px] h-[40px] rounded-full"
+                    className="w-[45px] h-[45px] rounded-full"
                 />
 
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col gap-1">
                     <h4 className="text-secondary-1 text-sm font-semibold">
                         {user?.displayName || ""}
                     </h4>
                     <p className="text-secondary-1 text-sm font-normal">
                         {user?.email || ""}
                     </p>
+
+                    <button
+                        onClick={() => {
+                            signOut(auth);
+                            router.push("/");
+                        }}
+                        className="button-primary-base p-2 rounded-[5px]"
+                    >
+                        Signout
+                    </button>
                 </div>
             </div>
         </div>

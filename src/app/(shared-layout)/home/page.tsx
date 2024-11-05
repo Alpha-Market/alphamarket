@@ -1,4 +1,3 @@
-import HostDiscoverScreen from "@/features/host/components/HostDiscoverScreen";
 import { TABS } from "@/util/constants";
 import { type Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -8,6 +7,9 @@ const HostFirstMessage = dynamic(
 );
 const HostProfileScreen = dynamic(
     () => import("@/features/host/components/HostProfileScreen")
+);
+const HostDiscoverScreen = dynamic(
+    () => import("@/features/host/components/HostDiscoverScreen")
 );
 
 type Props = {
@@ -45,7 +47,7 @@ export default function HomePage({ searchParams }: Props) {
     const tab = searchParams.tab;
 
     if (tab == TABS[0]) {
-        return <HostProfileScreen />;
+        return <HostProfileScreen onHostPage={false} />;
     } else if (tab == TABS[1]) {
         return <HostDiscoverScreen />;
     } else if (tab == TABS[2]) {
