@@ -1,17 +1,29 @@
 "use client";
 
-import { useAppStore } from "@/store/app.store";
-import { useUserStore } from "@/store/user.store";
-import { User } from "@/types";
+import type { User } from "@/types";
+
+import type { PropsWithChildren } from "react";
+
+import { accessTokenAtom, refreshTokenAtom, userAtom } from "@/store";
+import { useSetAtom } from "jotai";
 import { useEffect } from "react";
 
-export default function UserHydration({ userInfo }: { userInfo: User | null }) {
-    useEffect(() => {
-        if (userInfo) {
-            useUserStore.setState({ user: userInfo });
-            useAppStore.setState({ isLogin: true });
-        }
-    }, [userInfo]);
+type Props = PropsWithChildren & {
+	user: User;
+	access_token: string;
+	refresh_token: string;
+};
 
-    return null;
+export default function UserHydration({ user, access_token, refresh_token, children }: Props) {
+	const setUser = useSetAtom(userAtom);
+	const setAccessToken = useSetAtom(accessTokenAtom);
+	const setRefreshToken = useSetAtom(refreshTokenAtom);
+
+	useEffect(() => {
+		setUser(user);
+		setAccessToken(access_token);
+		setRefreshToken(refresh_token);
+	}, [user, access_token, refresh_token]);
+
+	return <>{children}</>;
 }

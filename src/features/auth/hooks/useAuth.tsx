@@ -1,84 +1,74 @@
-import {
-    hydrateNewUser,
-    hydrateOldUser,
-    hydrateTwitterUser,
-} from "@/features/auth/lib/hydration";
-import { auth } from "@/lib/firebase";
-import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signInWithPopup,
-    TwitterAuthProvider,
-} from "firebase/auth";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-const useAuth = () => {
-    const signUp = async (email: string, password: string) => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-            const user = userCredential.user;
-            await hydrateNewUser(user);
-        } catch (err: any) {
-            const errorCode = err.code;
-            const errorMessage = err.message;
+function useAuth() {
+	const router = useRouter();
 
-            toast.error(errorMessage);
-            console.log("[useAuth/signUp]", errorCode, "->", errorMessage);
+	const signUp = async (email: string, password: string) => {
+		try {
+			const res = await axios.post("/api/auth/signup", {
+				email,
+				password,
+			});
 
-            throw new Error("Error in signup no redirecting to onboard");
-        }
-    };
+			return res.data;
+		}
+		catch (err: any) {
+			const errorCode = err.code;
+			const errorMessage = err.message;
 
-    const signIn = async (email: string, password: string) => {
-        try {
-            const userCredential = await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-            const user = userCredential.user;
-            await hydrateOldUser(user);
-        } catch (err: any) {
-            const errorCode = err.code;
-            const errorMessage = err.message;
+			toast.error(errorMessage);
+			console.log("[useAuth/signUp]", errorCode, "->", errorMessage);
+			throw new Error("Error in signup no redirecting");
+		}
+	};
 
-            toast.error(errorMessage);
-            console.log("[useAuth/signIn]", errorCode, "->", errorMessage);
+	const signIn = async (email: string, password: string) => {
+		try {
+			await axios.post("/api/auth/signin", {
+				email,
+				password,
+			});
+		}
+		catch (err: any) {
+			const msg = err.response.data.error;
+			toast.error(msg);
+			console.log("[useAuth/signIn]", err);
+			throw new Error("Error in sign in no redirecting");
+		}
+	};
 
-            throw new Error("Error in signin no redirecting to home");
-        }
-    };
+	const signInWithTwitter = async () => {
+		try {
+			const res = await axios.get("/api/auth/twitter");
+			const oauthURL = res.data.oauth_url;
 
-    const signInWithTwitter = async () => {
-        try {
-            const provider = new TwitterAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            const user = result.user;
+			window.open(oauthURL, "_blank");
+		}
+		catch (err: any) {
+			console.log(err);
+			toast.error(err);
+		}
+	};
 
-            await hydrateTwitterUser(user);
-        } catch (err: any) {
-            const errorCode = err.code;
-            const errorMessage = err.message;
+	const signOut = async () => {
+		try {
+			await axios.post("/api/auth/signout");
+			router.push("/");
+		}
+		catch (err) {
+			console.log("[useAuth/signOut]", err);
+			toast.error("Error in signout no redirecting");
+		}
+	};
 
-            toast.error(errorMessage);
-            console.log(
-                "[useAuth/signInWithTwitter]",
-                errorCode,
-                "->",
-                errorMessage
-            );
-        }
-    };
-
-    return {
-        signUp,
-        signIn,
-        signInWithTwitter,
-    };
-};
+	return {
+		signUp,
+		signIn,
+		signInWithTwitter,
+		signOut,
+	};
+}
 
 export default useAuth;

@@ -1,18 +1,19 @@
-import LandingPage from "@/components/Screens/LandingPage";
 import type { Metadata } from "next";
 
+import LandingPage from "@/components/Screens/LandingPage";
+
 export const metadata: Metadata = {
-    title: 'AlphaMarket'
-}
+	title: "AlphaMarket",
+};
 
 export default function RootPage() {
-    return (
-        <LandingPage />
-            // {/* {
-            //     authUser ?
-            //         (isConnected ? <Flow /> : <WalletConnectScreen />)
-            //         : */}
-                    
-            // {/* } */}
-    );
+	return (
+		<LandingPage />
+	// {/* {
+	//     authUser ?
+	//         (isConnected ? <Flow /> : <WalletConnectScreen />)
+	//         : */}
+
+	// {/* } */}
+	);
 }

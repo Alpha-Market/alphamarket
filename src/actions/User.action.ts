@@ -1,15 +1,37 @@
-import { db } from "@/lib/firebase";
-import { User } from "@/types";
-import { doc, getDoc } from "firebase/firestore";
+import type { User } from "@/types";
+import { getApiBase } from "@/config";
 
-export const getUserById = async (uid: string) => {
-    const docRef = doc(db, "users", uid);
+import axios from "axios";
 
-    const docSnapshot = await getDoc(docRef);
+import { cookies } from "next/headers";
 
-    if (docSnapshot.exists()) {
-        return docSnapshot.data() as User;
-    }
+export async function getUserData() {
+	const cookieStore = await cookies();
+	const access_token = cookieStore.get("access_token")?.value;
 
-    return null;
-};
+	try {
+		const res = await axios.get(`${getApiBase()}/user`, {
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		});
+
+		return res.data.user as User;
+	}
+	catch (err) {
+		console.log(err);
+	}
+}
+
+export async function getUserDataById(id: string) {
+	const cookieStore = await cookies();
+	const access_token = cookieStore.get("access_token")?.value;
+
+	const res = await axios.get(`${getApiBase()}/user/${id}`, {
+		headers: {
+			Authorization: `Bearer ${access_token}`,
+		},
+	});
+
+	return res.data.user as User;
+}

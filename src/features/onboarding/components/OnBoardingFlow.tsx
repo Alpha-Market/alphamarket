@@ -1,82 +1,82 @@
 "use client";
 
-import RoleSelectionScreen from "./RoleSelectionScreen";
-import HostCreateGroup from "./HostCreateGroup";
-import HostFirstMessage from "../../../components/Screens/GroupChatScreen";
-import HostProfileScreen from "../../host/components/HostProfileScreen";
-import { useState } from "react";
-import UserDetailsGatherScreen from "./UserDetailsGatherScreen";
-import { useUserStore } from "@/store/user.store";
+import useUser from "@/hooks/useUser";
+
+import useUserAction from "@/hooks/useUserAction";
 import { UserRole } from "@/types";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import HostCreateGroup from "./HostCreateGroup";
+import RoleSelectionScreen from "./RoleSelectionScreen";
+import UserDetailsGatherScreen from "./UserDetailsGatherScreen";
 
 enum FLOW_STAGE {
-    // COMMON
-    ROLE_SELECTION = "role_selection",
-    USER_DETAILS = "user_details",
-
-    // HOST FLOW
-    HOST_GROUP_CREATION = "host_group_creation",
-    HOST_FIRST_MESSAGE = "host_first_message",
-    HOST_PROFILE = "host_profile",
-
-    // FAN FLOW
-    HOST_DISCOVER = "host_discover",
+	ROLE_SELECTION = "role_selection",
+	USER_DETAILS = "user_details",
+	HOST_GROUP_CREATION = "host_group_creation",
 }
 
-const OnBoardingFlow = () => {
-    const router = useRouter();
-    const [stage, setStage] = useState<FLOW_STAGE>(FLOW_STAGE.ROLE_SELECTION);
-    const user = useUserStore((state) => state.user);
+function OnBoardingFlow() {
+	const router = useRouter();
+	const [stage, setStage] = useState<FLOW_STAGE>(FLOW_STAGE.ROLE_SELECTION);
 
-    if (!user?.isNewUser) {
-        router.push("/home?tab=home");
-        return;
-    }
+	const [user] = useUser();
+	const { refetchUser } = useUserAction();
 
-    return (
-        <>
-            {stage === FLOW_STAGE.ROLE_SELECTION && (
-                <RoleSelectionScreen
-                    onComplete={() => {
-                        setStage(FLOW_STAGE.USER_DETAILS);
-                    }}
-                />
-            )}
+	if (user && !user.isNewUser) {
+		router.push("/home?tab=home");
+		return;
+	}
 
-            {stage === FLOW_STAGE.USER_DETAILS && (
-                <UserDetailsGatherScreen
-                    onBack={() => {
-                        setStage(FLOW_STAGE.ROLE_SELECTION);
-                    }}
-                    onComplete={() => {
-                        if (
-                            user &&
-                            Object.hasOwn(user, "role") &&
-                            user.role === UserRole.Host
-                        ) {
-                            setStage(FLOW_STAGE.HOST_GROUP_CREATION);
-                        } else {
-                            router.push("/home?tab=hosts");
-                        }
-                    }}
-                />
-            )}
+	return (
+		<>
+			{stage === FLOW_STAGE.ROLE_SELECTION && (
+				<RoleSelectionScreen
+					onComplete={() => {
+						setStage(FLOW_STAGE.USER_DETAILS);
+					}}
+				/>
+			)}
 
-            {stage === FLOW_STAGE.HOST_GROUP_CREATION && (
-                <HostCreateGroup
-                    onBack={() => {
-                        setStage(FLOW_STAGE.USER_DETAILS);
-                    }}
-                    onComplete={() => {
-                        router.push("/home?tab=chats");
-                    }}
-                />
-            )}
+			{stage === FLOW_STAGE.USER_DETAILS && (
+				<UserDetailsGatherScreen
+					onBack={() => {
+						setStage(FLOW_STAGE.ROLE_SELECTION);
+					}}
+					onComplete={() => {
+						if (
+							user
+							&& Object.hasOwn(user, "role")
+							&& user.role === UserRole.Host
+						) {
+							setStage(FLOW_STAGE.HOST_GROUP_CREATION);
+						}
+						else {
+							refetchUser()
+								.then(() => {
+									router.push("/home?tab=hosts");
+								});
+						}
+					}}
+				/>
+			)}
 
-            {stage === FLOW_STAGE.HOST_FIRST_MESSAGE && <HostFirstMessage />}
-        </>
-    );
-};
+			{stage === FLOW_STAGE.HOST_GROUP_CREATION && (
+				<HostCreateGroup
+					onBack={() => {
+						setStage(FLOW_STAGE.USER_DETAILS);
+					}}
+					onComplete={() => {
+						refetchUser()
+							.then(() => {
+								router.push("/home?tab=chats");
+							});
+					}}
+				/>
+			)}
+		</>
+	);
+}
 
 export default OnBoardingFlow;

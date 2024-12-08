@@ -1,15 +1,15 @@
-import { User } from "@/types";
-import { create } from "zustand";
+import type { User } from "@/types";
 
-type UserStore = {
-    user: User | null;
-    loadingUser: boolean;
+import { create } from "zustand/react";
 
-    hostInfo: User | null;
-};
+interface UserStore {
+	user: User | null;
+	loadingUser: boolean;
+	hostInfo: User | null;
+}
 
-export const useUserStore = create<UserStore>((set) => ({
-    user: null,
-    loadingUser: true,
-    hostInfo: null,
+export const useUserStore = create<UserStore>(set => ({
+	user: null,
+	loadingUser: true,
+	hostInfo: null,
 }));
