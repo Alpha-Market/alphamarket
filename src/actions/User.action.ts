@@ -20,6 +20,7 @@ export async function getUserData() {
 	}
 	catch (err) {
 		console.log(err);
+		return null;
 	}
 }
 

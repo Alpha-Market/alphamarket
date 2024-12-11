@@ -23,20 +23,3 @@ export function getApiBaseForNextApiRoute() {
 			return process.env.NEXT_PUBLIC_DEV_API_BASE || "undefined";
 	}
 }
-
-export function getENV() {
-	const ENV = process.env.ENV;
-	console.log(`ENV -> ${ENV}`);
-
-	switch (ENV) {
-		case "development":
-		case "dev":
-			return "dev";
-		case "production":
-		case "prod":
-			return "prod";
-		default:
-			console.log("USING DEFAULT getENV");
-			return "local";
-	}
-}

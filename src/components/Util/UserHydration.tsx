@@ -9,7 +9,7 @@ import { useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 type Props = PropsWithChildren & {
-	user: User;
+	user: User | null;
 	access_token: string;
 	refresh_token: string;
 };
