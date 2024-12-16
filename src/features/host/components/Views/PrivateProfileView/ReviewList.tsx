@@ -33,7 +33,7 @@ function ReviewItem({ reviewData }: { reviewData: Review }) {
 
 	return (
 		<div className="py-6 px-3 flex items-center gap-4 border first-of-type:border-t-0 border-stroke-1 cursor-pointer">
-			{(reviewer.profile_picture_url || reviewer.twitter_avatar_url) && false
+			{reviewer && (reviewer.profile_picture_url || reviewer.twitter_avatar_url) && false
 				? (
 						<Image
 							src={(reviewer?.profile_picture_url || reviewer?.twitter_avatar_url) as string}

@@ -368,8 +368,8 @@ export default function CreateNewEventDialog() {
 									src={
 										event_photo
 											? URL.createObjectURL(
-												event_photo as File,
-											)
+													event_photo as File,
+												)
 											: ""
 									}
 									alt="campaign banner image"

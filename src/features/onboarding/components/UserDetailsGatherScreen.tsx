@@ -26,8 +26,12 @@ function UserDetailsGatherScreen({
 	const [loading, setLoading] = useState(false);
 
 	const [name, setName] = useState(user?.name || "");
-	const [selectedCategories, setSelectedCategories] = useState<Categories[]>(user?.categories || []);
-	const [selectedNetwork, setSelectedNetwork] = useState<Network[]>(user?.networks || [Network.SEPOLIA]);
+	const [selectedCategories, setSelectedCategories] = useState<Categories[]>(
+		user?.categories || [],
+	);
+	const [selectedNetwork, setSelectedNetwork] = useState<Network[]>(
+		user?.networks || [Network.SEPOLIA],
+	);
 	const [profile_picture, setProfile_picture] = useState<File | null>(null);
 	const [user_bio, setUserBio] = useState(user?.bio || "");
 
@@ -58,11 +62,13 @@ function UserDetailsGatherScreen({
 	};
 
 	const isSubmitDisabled = () => {
-		return !profile_picture || !selectedCategories || !selectedNetwork || !user_bio;
+		return (
+			!profile_picture || !selectedCategories || !selectedNetwork || !user_bio
+		);
 	};
 
 	const onSelect = (value: Categories | Network) => {
-		let list: ((Categories | Network)[] | null) = null;
+		let list: (Categories | Network)[] | null = null;
 		let setter = null;
 
 		if (Object.values(Categories).includes(value as Categories)) {
@@ -90,9 +96,7 @@ function UserDetailsGatherScreen({
 	return (
 		<OnBoardLayout>
 			<div className="dialog-base sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[5%] z-[100] w-full sm:max-w-full max-w-[422px] sm:rounded-b-none p-4 flex flex-col gap-4">
-				{loading && (
-					<LoadingOverlay size={50} className="rounded-[12px]" />
-				)}
+				{loading && <LoadingOverlay size={50} className="rounded-[12px]" />}
 
 				<div className="flex items-center justify-between border-b border-b-stroke-1 pb-4">
 					{/* Back Icon */}
@@ -198,10 +202,7 @@ function UserDetailsGatherScreen({
 									className="hidden"
 									ref={inputFileRef}
 									onChange={(e) => {
-										if (
-											e.target.files
-											&& e.target.files.length > 0
-										) {
+										if (e.target.files && e.target.files.length > 0) {
 											setProfile_picture(e.target.files[0]);
 										}
 									}}
@@ -217,12 +218,7 @@ function UserDetailsGatherScreen({
 										fill="none"
 									>
 										<g filter="url(#filter0_f_244_10264)">
-											<circle
-												cx={127}
-												cy={23}
-												r={40}
-												fill="#FE01BE"
-											/>
+											<circle cx={127} cy={23} r={40} fill="#FE01BE" />
 										</g>
 										<defs>
 											<filter
@@ -234,10 +230,7 @@ function UserDetailsGatherScreen({
 												filterUnits="userSpaceOnUse"
 												colorInterpolationFilters="sRGB"
 											>
-												<feFlood
-													floodOpacity={0}
-													result="BackgroundImageFix"
-												/>
+												<feFlood floodOpacity={0} result="BackgroundImageFix" />
 												<feBlend
 													mode="normal"
 													in="SourceGraphic"
@@ -258,11 +251,22 @@ function UserDetailsGatherScreen({
 				</div>
 
 				<div className="flex flex-col gap-2">
-					<label htmlFor="name" className="text-secondary text-xs font-normal uppercase">
+					<label
+						htmlFor="name"
+						className="text-secondary text-xs font-normal uppercase"
+					>
 						name
 					</label>
 
-					<input type="text" id="name" className="rounded-lg bg-card-1 p-3 text-white text-sm" value={name} onChange={(e) => { setName(e.target.value); }} />
+					<input
+						type="text"
+						id="name"
+						className="rounded-lg bg-card-1 p-3 text-white text-sm"
+						value={name}
+						onChange={(e) => {
+							setName(e.target.value);
+						}}
+					/>
 				</div>
 
 				<div className="flex flex-col gap-2">
@@ -375,11 +379,7 @@ interface SelectChipProp {
 	onClick: () => void;
 }
 
-const SelectChip: FC<SelectChipProp> = ({
-	value,
-	isSelected,
-	onClick,
-}) => {
+const SelectChip: FC<SelectChipProp> = ({ value, isSelected, onClick }) => {
 	return (
 		<button
 			type="button"
@@ -392,9 +392,7 @@ const SelectChip: FC<SelectChipProp> = ({
 			<span
 				className={cn(
 					"text-base",
-					isSelected
-						? "text-white font-bold"
-						: "text-secondary font-normal",
+					isSelected ? "text-white font-bold" : "text-secondary font-normal",
 				)}
 			>
 				{value}
