@@ -4,8 +4,8 @@ RUN apk add --no-cache libc6-compat python3 make g++
 
 WORKDIR /app
 COPY package.json ./
-# Install pnpm globally
-RUN npm install -g pnpm
+# Install specific version of pnpm globally
+RUN npm install -g pnpm@8.6.0
 # Install dependencies with pnpm (without using lockfile)
 RUN pnpm install --force  
 
@@ -32,10 +32,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
-# Install pnpm globally in the runner stage
-RUN npm install -g pnpm
+# Install specific version of pnpm globally in the runner stage
+RUN npm install -g pnpm@8.6.0
 RUN apk add --no-cache libc6-compat python3 make g++ 
-RUN pnpm install --frozen-lockfile --prod --force 
+RUN pnpm install --prod --force 
 
 USER nextjs
 
