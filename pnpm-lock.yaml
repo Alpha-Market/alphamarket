@@ -4,6 +4,7 @@ specifiers:
   '@antfu/eslint-config': ^3.9.2
   '@eslint-react/eslint-plugin': ^1.16.1
   '@ethereum-attestation-service/eas-sdk': ^2.7.0
+  '@next/eslint-plugin-next': ^15.1.0
   '@radix-ui/react-checkbox': ^1.1.2
   '@radix-ui/react-dialog': ^1.1.2
   '@radix-ui/react-scroll-area': ^1.2.1
@@ -70,6 +71,7 @@ dependencies:
 devDependencies:
   '@antfu/eslint-config': 3.12.0_19a02d4bf2c7018b8b38bf3686af648c
   '@eslint-react/eslint-plugin': 1.20.0_eslint@9.17.0+typescript@5.7.2
+  '@next/eslint-plugin-next': 15.1.0
   '@types/jsonwebtoken': 9.0.7
   '@types/node': 20.17.10
   '@types/react': /types-react/19.0.0-rc.1
@@ -1389,6 +1391,12 @@ packages:
 
   /@next/eslint-plugin-next/15.0.3:
     resolution: {integrity: sha512-3Ln/nHq2V+v8uIaxCR6YfYo7ceRgZNXfTd3yW1ukTaFbO+/I8jNakrjYWODvG9BuR2v5kgVtH/C8r0i11quOgw==}
+    dependencies:
+      fast-glob: 3.3.1
+    dev: true
+
+  /@next/eslint-plugin-next/15.1.0:
+    resolution: {integrity: sha512-+jPT0h+nelBT6HC9ZCHGc7DgGVy04cv4shYdAe6tKlEbjQUtwU3LzQhzbDHQyY2m6g39m6B0kOFVuLGBrxxbGg==}
     dependencies:
       fast-glob: 3.3.1
     dev: true

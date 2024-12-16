@@ -34,8 +34,8 @@ COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Install pnpm globally in the runner stage
 RUN npm install -g pnpm
-RUN apk add --no-cache libc6-compat python3 make g++ && \
-    pnpm install --frozen-lockfile --prod --force 
+RUN apk add --no-cache libc6-compat python3 make g++ 
+RUN pnpm install --frozen-lockfile --prod --force 
 
 USER nextjs
 
