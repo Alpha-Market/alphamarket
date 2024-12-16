@@ -7,7 +7,7 @@ COPY package.json pnpm-lock.yaml ./
 # Install pnpm globally
 RUN npm install -g pnpm
 # Install dependencies with pnpm
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --force  # Added --force to recreate the lockfile
 
 # Build stage
 FROM base AS builder
@@ -34,7 +34,7 @@ COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Install production dependencies using pnpm
 RUN apk add --no-cache libc6-compat python3 make g++ && \
-    pnpm install --frozen-lockfile --prod
+    pnpm install --frozen-lockfile --prod --force  # Added --force here too
 
 USER nextjs
 
