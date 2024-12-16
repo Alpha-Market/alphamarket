@@ -30,7 +30,10 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml  
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Install pnpm globally in the runner stage
+RUN npm install -g pnpm
 RUN apk add --no-cache libc6-compat python3 make g++ && \
     pnpm install --frozen-lockfile --prod --force 
 
