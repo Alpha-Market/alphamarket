@@ -37,7 +37,7 @@ jobs:
         run: |
           docker build \
             --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }} \
-            -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/alphamarket/nextjs-app:${{ github.sha }} .
+            -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/alphamarket/nextjs-app:${{ github.sha }} .
 
       # Push Docker image to Google Container Registry
       - name: Push Docker image
