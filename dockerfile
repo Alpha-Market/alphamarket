@@ -3,16 +3,16 @@ FROM node:18.18-alpine AS base
 RUN apk add --no-cache libc6-compat python3 make g++
 
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
 # Install pnpm globally
 RUN npm install -g pnpm
-# Install dependencies with pnpm
-RUN pnpm install --frozen-lockfile --force  # Added --force to recreate the lockfile
+# Install dependencies with pnpm (without using lockfile)
+RUN pnpm install --force  
 
 # Build stage
 FROM base AS builder
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
-COPY . .
+COPY . .  
 ENV NEXT_PUBLIC_FIREBASE_API_KEY=${NEXT_PUBLIC_FIREBASE_API_KEY}
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN pnpm run build
@@ -30,11 +30,9 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-
-# Install production dependencies using pnpm
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml  
 RUN apk add --no-cache libc6-compat python3 make g++ && \
-    pnpm install --frozen-lockfile --prod --force  # Added --force here too
+    pnpm install --frozen-lockfile --prod --force 
 
 USER nextjs
 
