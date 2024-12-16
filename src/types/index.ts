@@ -67,7 +67,7 @@ export interface Review {
 	reviewer_user_id: string;
 	attestation_uid: string;
 	user_id: string;
-	reviewer: User;
+	reviewer: User | null;
 }
 
 export enum Categories {

@@ -39,8 +39,7 @@ function HostCreateGroup({
 
 	const { data: initialReserveValue } = useReadContract({
 		abi: SEPOLIA_EXPONENTIAL_BONDING_CURVE_ABI,
-		address: process.env
-			.NEXT_PUBLIC_SEPOLIA_EXPONENTIAL_PROXY as `0x${string}`,
+		address: process.env.NEXT_PUBLIC_SEPOLIA_EXPONENTIAL_PROXY as `0x${string}`,
 		functionName: "initialReserve",
 		chainId: sepolia.id,
 	});
@@ -99,9 +98,7 @@ function HostCreateGroup({
 		<OnBoardLayout>
 			{/* Box */}
 			<div className="dialog-base sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto top-[10%] z-[100] w-full sm:max-w-full max-w-[422px] sm:rounded-b-none p-4 flex flex-col gap-4">
-				{loading && (
-					<LoadingOverlay size={50} className="rounded-[12px]" />
-				)}
+				{loading && <LoadingOverlay size={50} className="rounded-[12px]" />}
 
 				<div className="flex items-center justify-between border-b border-b-stroke-1 pb-4">
 					{/* Back Icon */}
@@ -206,10 +203,7 @@ function HostCreateGroup({
 								className="hidden"
 								ref={inputFileRef}
 								onChange={(e) => {
-									if (
-										e.target.files
-										&& e.target.files.length > 0
-									) {
+									if (e.target.files && e.target.files.length > 0) {
 										const t = e.target.files[0];
 										setGroupPhoto(e.target.files[0]);
 									}
@@ -226,12 +220,7 @@ function HostCreateGroup({
 									fill="none"
 								>
 									<g filter="url(#filter0_f_244_10264)">
-										<circle
-											cx={127}
-											cy={23}
-											r={40}
-											fill="#FE01BE"
-										/>
+										<circle cx={127} cy={23} r={40} fill="#FE01BE" />
 									</g>
 									<defs>
 										<filter
@@ -243,10 +232,7 @@ function HostCreateGroup({
 											filterUnits="userSpaceOnUse"
 											colorInterpolationFilters="sRGB"
 										>
-											<feFlood
-												floodOpacity={0}
-												result="BackgroundImageFix"
-											/>
+											<feFlood floodOpacity={0} result="BackgroundImageFix" />
 											<feBlend
 												mode="normal"
 												in="SourceGraphic"
