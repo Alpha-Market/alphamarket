@@ -1,5 +1,6 @@
 import { getUserData } from "@/actions/User.action";
 import UserHydration from "@/components/Util/UserHydration";
+import WalletConnectWrapper from "@/context/WalletConnectWrapper";
 import { cookies } from "next/headers";
 
 export default async function ProtectLayout({
@@ -14,7 +15,9 @@ export default async function ProtectLayout({
 
 	return (
 		<UserHydration user={user} access_token={access_token} refresh_token={refresh_token}>
-			{children}
+			<WalletConnectWrapper>
+				{children}
+			</WalletConnectWrapper>
 		</UserHydration>
 	);
 }

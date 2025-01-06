@@ -9,6 +9,7 @@ function WalletConnectScreen() {
 		<OnBoardLayout>
 			<div className="sm:fixed sm:bottom-0 sm:inset-x-0 absolute sm:top-auto my-auto z-[100] sm:bg-card-1 w-full sm:max-w-full max-w-[422px] sm:border sm:border-stroke-1 sm:rounded-t-xl p-4 flex flex-col gap-4">
 				<button
+					type="button"
 					onClick={() => {
 						connect(
 							{
