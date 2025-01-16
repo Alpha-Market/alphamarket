@@ -31,6 +31,7 @@ class ErrorBoundary extends Component<Props, State> {
 				<div className="flex-1 flex flex-col gap-2 items-center justify-center">
 					<h1 className="text-black text-1414 font-bold">Something went wrong...</h1>
 					<button
+						type="button"
 						onClick={() => {
 							window.location.reload();
 						}}

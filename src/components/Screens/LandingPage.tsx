@@ -31,7 +31,7 @@ function LandingPage() {
 
 					<div className="flex items-center gap-[10px]">
 						<Link href="/auth">
-							<button className="py-2 px-3 flex items-center justify-center gap-[10px] bg-card-2 border border-stroke-1 rounded-[170px]">
+							<button type="button" className="py-2 px-3 flex items-center justify-center gap-[10px] bg-card-2 border border-stroke-1 rounded-[170px]">
 								<span className="text-[#FE01BE] text-xs font-semibold leading-[12px] -tracking-[.6px]">
 									Sign up for Beta Waitlist
 								</span>
@@ -51,7 +51,7 @@ function LandingPage() {
 							</button>
 						</Link>
 
-						<button className="bg-transparent border-none outline-none p-3">
+						<button type="button" className="bg-transparent border-none outline-none p-3">
 							<span
 								className="text-white font-semibold text-xs -tracking-[.6px] leading-[12px]"
 							>
@@ -63,7 +63,7 @@ function LandingPage() {
 
 				<div className="flex flex-col items-center justify-between p-6">
 					<Link href="/">
-						<button className="bg-transparent border-none outline-none">
+						<button type="button" className="bg-transparent border-none outline-none">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width={38}
@@ -99,7 +99,7 @@ function LandingPage() {
 						</button>
 					</Link>
 
-					<button className="bg-transparent border-none outline-none">
+					<button type="button" className="bg-transparent border-none outline-none">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width={33}
@@ -228,7 +228,7 @@ function LandingPage() {
 							placeholder="your email"
 						/>
 
-						<button className="flex items-center justify-center gap-[10px] py-1 border-[1px] border-white/10 rounded-[170px] bg-white/5 w-[182px]">
+						<button type="button" className="flex items-center justify-center gap-[10px] py-1 border-[1px] border-white/10 rounded-[170px] bg-white/5 w-[182px]">
 							<p className="text-white/50 font-medium text-xl">
 								Submit
 							</p>

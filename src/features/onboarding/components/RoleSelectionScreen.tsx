@@ -114,6 +114,7 @@ const RoleButton: FC<RoleButtonProps> = ({
 }) => {
 	return (
 		<button
+			type="button"
 			className={cn(
 				"flex items-center justify-between w-full rounded-lg p-3 border border-stroke-1",
 				currentRole === requiredRole && "border-white",

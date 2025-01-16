@@ -1,41 +1,26 @@
-module.exports = {
-	root: true,
-	env: {
-		browser: true,
-		es2021: true,
-		node: true,
+import antfu from "@antfu/eslint-config";
+
+export default antfu({
+	type: "app",
+	typescript: true,
+	formatters: true,
+	react: true,
+	jsonc: true,
+	stylistic: {
+		indent: "tab",
+		semi: true,
+		quotes: "double",
 	},
-	extends: [
-		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:react/recommended",
-		"plugin:react-hooks/recommended",
-		"plugin:jsx-a11y/recommended",
-		"next/core-web-vitals",
-	],
-	parser: "@typescript-eslint/parser",
-	parserOptions: {
-		ecmaFeatures: {
-			jsx: true,
-		},
-		ecmaVersion: 12,
-		sourceType: "module",
-	},
-	plugins: ["@typescript-eslint", "react", "react-hooks", "jsx-a11y"],
+	ignores: ["tailwind.config.ts"],
+}, {
 	rules: {
-		indent: ["error", "tab"],
-		semi: ["error", "always"],
-		quotes: ["error", "double"],
-		"no-console": "off",
-		"@typescript-eslint/no-unused-vars": "off",
-		"react/prop-types": "off",
-		"react/react-in-jsx-scope": "off",
-		"react-hooks/exhaustive-deps": "off",
+		"no-console": ["off"],
+		"unused-imports/no-unused-imports": ["warn"],
+		"unused-imports/no-unused-vars": ["off"],
+		"react-hooks/exhaustive-deps": ["off"],
+		"node/prefer-global/process": ["off"],
+		"ts/no-use-before-define": ["off"],
+		"style/multiline-ternary": ["off"],
+		"react/prefer-destructuring-assignment": "off",
 	},
-	ignorePatterns: ["tailwind.config.ts"],
-	settings: {
-		react: {
-			version: "detect",
-		},
-	},
-};
+});

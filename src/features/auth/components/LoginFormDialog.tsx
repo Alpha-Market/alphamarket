@@ -53,12 +53,7 @@ function LoginFormDialog() {
 		if (!isNewUser)
 			return false;
 
-		if (hasAcceptedTerms) {
-			return false;
-		}
-		else {
-			return true;
-		}
+		return !hasAcceptedTerms;
 	};
 
 	return (
@@ -66,6 +61,7 @@ function LoginFormDialog() {
 			{loading && <LoadingOverlay size={50} className="rounded-[12px]" />}
 			<div className="p-3 border border-stroke-1 rounded-lg flex items-center w-max gap-[10px]">
 				<button
+					type="button"
 					className={cn(
 						"text-base",
 						isNewUser
@@ -80,6 +76,7 @@ function LoginFormDialog() {
 				</button>
 				<span className="w-[1px] h-[20px] bg-stroke-1" />
 				<button
+					type="button"
 					className={cn(
 						"text-base",
 						!isNewUser
@@ -154,6 +151,7 @@ function LoginFormDialog() {
 				)}
 
 				<button
+					type="button"
 					disabled={checkLoginDisable()}
 					className={cn(
 						"w-full p-3 bg-white text-black text-sm uppercase font-semibold -tracking-[.98px] rounded-lg",
@@ -164,6 +162,7 @@ function LoginFormDialog() {
 					{isNewUser ? "Agree & Join" : "Continue"}
 				</button>
 				<button
+					type="button"
 					disabled={
 						isNewUser ? (!hasAcceptedTerms) : false
 					}

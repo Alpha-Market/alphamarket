@@ -87,7 +87,7 @@ export default function HostProfileTabs({
 					dragConstraints={dragConstraintRef}
 					dragDirectionLock
 					dragMomentum={false}
-					onDragEnd={(e, info) => {
+					onDragEnd={(e: any, info: any) => {
 						const swipe = swipePower(
 							info.offset.x,
 							info.velocity.x,

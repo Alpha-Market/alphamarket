@@ -80,10 +80,10 @@ export default function CreateReviewDialog() {
 			await refetchUser();
 			reset();
 		}
- catch (error) {
+		catch (error) {
 			console.error("Error submitting review", error);
 		}
- finally {
+		finally {
 			setLoading(false);
 			setOpenDialog(false);
 		}
@@ -95,7 +95,7 @@ export default function CreateReviewDialog() {
 			onOpenChange={(_open) => {
 				setOpenDialog(_open);
 				if (!_open)
-reset(); // Reset only when closing dialog
+					reset(); // Reset only when closing dialog
 			}}
 		>
 			<DialogTrigger>
@@ -115,7 +115,7 @@ reset(); // Reset only when closing dialog
 						<div className="flex items-center justify-between">
 							<h4 className="text-white text-sm font-medium uppercase">Leave review</h4>
 							<DialogClose asChild>
-								<button aria-label="Close review dialog">
+								<button type="button" aria-label="Close review dialog">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="16"

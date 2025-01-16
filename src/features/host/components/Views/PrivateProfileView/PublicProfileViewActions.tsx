@@ -5,7 +5,7 @@ const CreateReviewDialog = dynamic(
 	{
 		// ssr: false,
 		loading: () => (
-			<button className="p-3 border border-black/10 rounded-lg bg-[#D9D9D9]">
+			<button type="button" className="p-3 border border-black/10 rounded-lg bg-[#D9D9D9]">
 				<p className="text-black text-sm font-semibold -tracking-[.98px] uppercase">
 					Leave review
 				</p>

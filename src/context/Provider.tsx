@@ -11,7 +11,6 @@ import dynamic from "next/dynamic";
 
 import { Toaster } from "react-hot-toast";
 import { WagmiProvider } from "wagmi";
-import WalletConnectWrapper from "./WalletConnectWrapper";
 import "jotai-devtools/styles.css";
 
 const DevTools = dynamic(
@@ -30,9 +29,7 @@ const Provider: FC<PropsWithChildren> = ({
 				<QueryClientProvider client={queryClient}>
 					<JotaiProvider store={jotaiStore}>
 						<DevTools position="bottom-right" store={jotaiStore} />
-						<WalletConnectWrapper>
-							{children}
-						</WalletConnectWrapper>
+						{children}
 					</JotaiProvider>
 				</QueryClientProvider>
 			</WagmiProvider>

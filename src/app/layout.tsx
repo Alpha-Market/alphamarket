@@ -12,7 +12,6 @@ export default async function RootLayout({
 	return (
 		<html lang="en" className={cn(interFont.className)}>
 			<body className="w-screen h-screen overflow-hidden flex">
-				{/* <UserHydration userData={user} /> */}
 				<Provider>{children}</Provider>
 			</body>
 		</html>

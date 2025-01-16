@@ -73,7 +73,7 @@ function Event({ event, hostName }: { event: Campaign; hostName: string }) {
 				</div>
 			</div>
 
-			<button className="button-primary-base max-w-[130px]">
+			<button type="button" className="button-primary-base max-w-[130px]">
 				<p className="text-black text-sm font-semibold uppercase -tracking-[.98px]">
 					sponsor space
 				</p>

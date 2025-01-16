@@ -178,7 +178,7 @@ function MessageChip({ m }: { m: Message }) {
 					</span>
 				</div>
 
-				<button className="flex gap-1 items-center py-3 px-4 rounded-[100px] border border-stroke-1 bg-[#292929] shadow-[0px_4px_4px_0px_rgba(0_0_0_0.25)]">
+				<button type="button" className="flex gap-1 items-center py-3 px-4 rounded-[100px] border border-stroke-1 bg-[#292929] shadow-[0px_4px_4px_0px_rgba(0_0_0_0.25)]">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width={16}
